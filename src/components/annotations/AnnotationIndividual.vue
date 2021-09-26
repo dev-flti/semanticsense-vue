@@ -34,7 +34,7 @@
                         <label for="individualComment">Comment</label>
             </div>
             <div class="individual-buttons">
-                <button class="btn btn-primary" :disabled="!!disabledInput" type="button" @click="addIndividual()">Add</button>
+                <button class="btn btn-primary" :disabled="!!disabledInput || buttonEnabled" type="button" @click="addIndividual()">Add</button>
         </div>
             </div>
             
@@ -81,27 +81,16 @@ export default {
     },
     props: ['individualsList', ],
     methods: {
-        onIndividualChange(event){
-            console.log(event.target)
-        },
-        onClassChange(event){
-            console.log(event.target.value)
-            console.log(this.classes)
-        },
+
         addIndividual(){
             console.log(this.checkedIndividual)
              if (this.individualName != "" && this.individualLabel != "" && this.individualComment != "" && this.selectedClass){
-             /*   this.individuals.push({
-                    "name": this.individualName,
-                    "label": this.individualLabel,
-                    "comment": this.individualComment
-                })
-            } */
             const data = {
                     "name": this.individualName,
                     "label": this.individualLabel,
                     "comment": this.individualComment,
-                    "classId": this.selectedClass
+                    "classId": this.selectedClass,
+                    "classType": this.classes[this.selectedClass].name
                 }
             this.individualName = "";
             this.individualLabel = ""; 
@@ -120,6 +109,12 @@ export default {
                 classes_arr.push(val)
         });
             return classes_arr;
+        },
+        buttonEnabled() {
+            if ( this.individualName != "" && this.selectedClass && this.individualLabel != "" && this.individualComment != ""){
+                return false
+            }
+            return true
         }
     },
     emits: ['add-individual',]
