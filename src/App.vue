@@ -1,30 +1,111 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/>
+  <the-header></the-header>
+  <router-view v-slot="slotProps">
+    <transition name="route" mode="out-in">
+      <component :is="slotProps.Component"></component>
+    </transition>
+  </router-view>
+    <the-footer></the-footer>
+
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+import TheHeader from './components/general/TheHeader.vue';
+import TheFooter from './components/general/TheFooter.vue';
+
+export default {
+  components: {
+    TheHeader,
+    TheFooter
+  },
+  data: () => ({
+    //
+  }),
+}
+</script>
+
+<style>
+
+* {
+  box-sizing: border-box;
 }
 
-#nav {
-  padding: 30px;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+html {
+  font-family: "Roboto", sans-serif;
+}
 
-    &.router-link-exact-active {
-      color: #42b983;
+body {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    min-height: 100vh;
+    margin-bottom: 50px;
+}
+
+.btn-primary{
+        background-color: #3B4018;
+        border: solid 1px #efefef;
+        color: #fff;
+        transition: all 200ms ease-in-out;
     }
-  }
+
+.btn-primary:hover{
+        background-color: #fff;
+        border: solid 1px #3B4018;
+        color: #3B4018;
+    }
+
+.btn-outline-primary{
+        background-color: #fff;
+        border: solid 1px #3B4018;
+        color: #3B4018;
 }
+
+.btn-outline-primary:hover{
+      background-color: #3B4018;
+        border: solid 1px #efefef;
+        color: #fff;
+        transition: all 200ms ease-in-out;
+}
+
+.route-enter-from {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.route-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.route-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.route-leave-active {
+  transition: all 0.3s ease-in;
+}
+
+.route-enter-to,
+.route-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+ .btn-check:focus + .btn-primary, .btn-primary:focus {
+
+    box-shadow: 0 0 0 0.25rem rgb(49 132 253 / 50%);
+
+    background-color: #3B4018;
+        border: solid 1px #efefef;
+        color: #fff;
+}
+
+.btn-primary:disabled, .btn-primary.disabled {
+  background-color: #e5e9ec;
+  border-color: #e5e9ec;
+  color: #2b2b2b;
+}
+
 </style>
