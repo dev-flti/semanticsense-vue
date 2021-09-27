@@ -1,24 +1,17 @@
 # semanticsense
 
-## Project setup
+## Installing application
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Serving Application 
 ```
 yarn serve
 ```
 
-### Compiles and minifies for production
+### Building 
 ```
 yarn build
 ```
 
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

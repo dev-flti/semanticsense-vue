@@ -15,6 +15,7 @@
     "bootstrap": "^5.0.0-beta3",
     "core-js": "^3.6.5",
     "roboto-fontface": "*",
+    "uuid": "^8.3.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuetify": "^3.0.0-alpha.0",

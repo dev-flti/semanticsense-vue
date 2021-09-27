@@ -1,6 +1,10 @@
 <template>
     <div class="container mb-4">
-        <objects-modal :show="openModal" @close="closeDialog"></objects-modal>
+        <objects-modal v-if="checkedPredicate" 
+        :show="openModal" 
+        :isFunctional="checkedPredicate.is_functional == '1'" @save-close="addObjects" @close="closeDialog"
+        :literals="literals"
+        :individuals="individuals"></objects-modal>
         <div class="action-bar">
            <div class="dropdown">
                         <button class="dropdown-toggle btn btn-primary" type="button" id="subjectDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -82,7 +86,7 @@
         </div>
     </div>
 </div>
-<annotation-individual :individualsList="individuals" @add-individual="addIndividual"></annotation-individual>
+<annotation-individual :literalList="literals" :individualsList="individuals" @add-literal="addLiteral" @add-individual="addIndividual" @delete-individual="removeIndividual" @delete-literal="removeLiteral"></annotation-individual>
 
 
 <div id="add_annotation" class="add-annotation">
@@ -91,18 +95,28 @@
         <div class="add-annotation-section-header">
                     <h3>Subject</h3>
                      <select class="form-select d-flex justify-content-center" aria-label="Default select example" @change="onSubjectSelectorChange($event)" v-model="subject_id">
-                        <option value="-1" selected>Select Subject Class</option>
-                        <option v-for="sub in subjects" :key="sub.id" :value="sub.id">{{sub.class_data.name}}</option>    
+                        <option value="-1"  disabled>Select Subject Class</option>
+                        <option v-for="(sub, index) in individuals" :key="index" :value="index">{{sub.name}}</option>    
                     </select>
             </div>
-            <div class="triple-save p-2" >
-                <div class="triple-save-section subject">
-                    <div class="input-group mb-3">
-                        <input type="text" class="w-100 text-center" placeholder="Enter Label for Subject" aria-label="Label" aria-describedby="label_input">
+            <div v-if="subject" class="triple-save p-2" >
+                <div class="triple-save-section">
+                 <div class="tripel-part-data">
+                    <span class="data-label">Name</span>
+                    <span>{{individuals[subject.id].name}}</span>
+                 </div>
+                 <div class="tripel-part-data">
+                        <span class="data-label">Class Type</span>
+                        <span>{{individuals[subject.id].classType}}</span>
                     </div>
-                    <div class="input-group mb-3">
-                        <input type="text" class="w-100 text-center" placeholder="Enter Comment for Subject" aria-label="Label" aria-describedby="label_input">
-                    </div>
+                 <div class="tripel-part-data">
+                    <span class="data-label">Label</span>
+                    <span>{{individuals[subject.id].label}}</span>
+                 </div>
+                 <div class="tripel-part-data">
+                    <span class="data-label">Comment</span>
+                    <span>{{individuals[subject.id].comment}}</span>
+                 </div>
                 </div>
             </div>
     </div>
@@ -110,31 +124,75 @@
       <div class="annotation-create-item">
         <div class="add-annotation-section-header">
                     <h3>Predicate</h3>
-                    <select class="form-select d-flex justify-content-center" aria-label="Default select example" @change="onPredicateSelectorChange($event)" v-model="predicate_id">
-                        <option value="-1" selected>Select Predicate</option>
+                    <select class="form-select d-flex justify-content-center" aria-label="Default select example" @change="onPredicateSelectorChange()" v-model="predicate_id">
+                        <option value="-1" disabled selected>Select Predicate</option>
                         <option v-for="pred in predicates" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
                     </select>
             </div>
-                  <div class="triple-save p-2" >
-                <div class="triple-save-section subject">
-                    <div class="input-group mb-3">
-                        <input type="text" class="w-100 text-center" placeholder="Enter Label for Subject" aria-label="Label" aria-describedby="label_input">
+                  <div v-if="checkedPredicate" class="triple-save p-2" >
+                    <div class="triple-save-section">
+                    <div class="tripel-part-data">
+                        <span class="data-label">Name</span>
+                        <span>{{checkedPredicate.relation_name}}</span>
                     </div>
-                    <div class="input-group mb-3">
-                        <input type="text" class="w-100 text-center" placeholder="Enter Comment for Subject" aria-label="Label" aria-describedby="label_input">
+                    <div class="tripel-part-data">
+                        <span class="data-label">Subjects</span>
+                        <span>{{possibleSubjects}}</span>
+                    </div>
+                    <div class="tripel-part-data">
+                        <span class="data-label">Objects</span>
+                        <span>{{possibleObjects}}</span>
+                    </div>
                     </div>
                 </div>
-            </div>
     </div>
 
       <div class="annotation-create-item">
         <div class="add-annotation-section-header">
                     <h3>Object</h3> 
-                    <button class="btn btn-primary" @click="toggleObjectModal()" type="button" id="openModal">Choose Object</button>                   
+                    <button class="btn btn-primary" :disabled="!checkedPredicate" @click="toggleObjectModal()" type="button" id="openModal">Choose Object</button>                   
             </div>
             <div class="triple-save p-2" >
                 <div class="triple-save-section object">
-                    <span class="">Please choose object</span>
+                    <span v-if="checkedPredicate && o_array.length == 0" class="">Please choose object or literal</span>
+                    <span v-if="!checkedPredicate" class="">First select predicate</span>
+                
+                <div v-if="!isFunctional && o_array.length > 0">
+                <div  v-for="(o, index) in o_array" :key="index" class="triple-save-section">
+                    <div class="tripel-part-data">
+                        <span class="data-label">Name</span>
+                        <span>{{individuals[o].name}}</span>
+                    </div>
+                    <div class="tripel-part-data">
+                        <span class="data-label">Class Type</span>
+                        <span>{{individuals[o].classType}}</span>
+                    </div>
+                    <div class="tripel-part-data">
+                        <span class="data-label">Label</span>
+                        <span>{{individuals[o].label}}</span>
+                    </div>
+                    <div class="tripel-part-data">
+                        <span class="data-label">Comment</span>
+                        <span>{{individuals[o].comment}}</span>
+                    </div>
+                    <div class="break-line">
+                        <hr>
+                    </div>
+                    </div>
+            </div>    
+
+            <div v-if="isFunctional && o_array.length > 0">
+                <div  v-for="(o, index) in o_array" :key="index" class="triple-save-section">
+                    <div class="tripel-part-data">
+                        <span class="data-label">Value</span>
+                        <span>{{literals[o].name}}</span>
+                    </div>
+                    <div class="break-line">
+                        <hr>
+                    </div>
+                </div>
+            </div>   
+
             </div>
         </div>
     </div>
@@ -149,14 +207,80 @@
 
 
     
-<annotation-tripel v-for="tripel in tripels" :key="tripel" :triple="tripel"></annotation-tripel>
-</div>
+<!-- <annotation-tripel v-for="tripel in tripels" :key="tripel" :triple="tripel"></annotation-tripel>-->
+
+  <div v-for="(tripel, index) in tripels" :key="index" class="tripel-wrapper">
+      <div class="tripel-part">
+        <div> 
+            <span class="data-label">Name:</span>
+            <p>{{individuals[tripel.subject.id].name}}</p>
+        </div>
+        <div> 
+            <span class="data-label">Label:</span>
+            <p>{{individuals[tripel.subject.id].label}}</p>
+        </div>
+        <div> 
+            <span class="data-label">Comment:</span>
+            <p>{{individuals[tripel.subject.id].comment}}</p>
+        </div>
+          <div> 
+            <span class="data-label">Id:</span>
+            <p>{{individuals[tripel.subject.id].id}}</p>
+        </div>
+      </div>
+      <div class="tripel-part">
+            <div> 
+                <span class="data-label">Id</span>
+                <p>{{tripel.predicate}}</p>
+            </div>
+            <div> 
+                <span class="data-label">Name</span>
+                <p>{{ontologyRelations[tripel.predicate].relation_name}}</p>
+            </div>
+      </div>
+      <div v-if="ontologyRelations[tripel.predicate].is_functional == '0'" class="tripel-part">
+             <div  v-for="(o, index) in tripel.objects" :key="index" class="triple-save-section">
+                    <div class="tripel-part-data">
+                        <span class="data-label">Name</span>
+                        <span>{{individuals[o].name}}</span>
+                    </div>
+                    <div class="tripel-part-data">
+                        <span class="data-label">Class Type</span>
+                        <span>{{individuals[o].classType}}</span>
+                    </div>
+                    <div class="tripel-part-data">
+                        <span class="data-label">Label</span>
+                        <span>{{individuals[o].label}}</span>
+                    </div>
+                    <div class="tripel-part-data">
+                        <span class="data-label">Comment</span>
+                        <span>{{individuals[o].comment}}</span>
+                    </div>
+                    <div class="break-line">
+                        <hr>
+                    </div>
+                    </div>
+      </div>
+          <div v-else class="tripel-part">
+             <div  v-for="(o, index) in tripel.objects" :key="index" class="triple-save-section">
+                    <div class="tripel-part-data">
+                        <span class="data-label">Value</span>
+                        <span>{{literals[o].name}}</span>
+                    </div>
+                    <div class="break-line">
+                        <hr>
+                    </div>
+                    </div>
+      </div>
+
+  </div>
+
+ </div>
 </template>
 
 <script>
 import AnnotationTripel from '../../components/annotations/AnnotationTripel.vue'
 import AnnotationIndividual from '../../components/annotations/AnnotationIndividual.vue'
-
 import ObjectsModal from '../../components/annotations/ObjectsModal.vue'
 export default {
       components: {
@@ -167,42 +291,57 @@ export default {
     data(){
         return{
 
+            //project metadata
             title: "",
             author: "", 
             date: "",
             description: "",
 
-            openModal: false,
-            individuals: [],
-            //variables current editable triple
-            //subject
-            value: "",
-            subject_id: "",
+            //ontology data
+            individuals: {},
+            literals: {},
             ontology_id: "",
-            predicate_id: "",
+
+            //variables current editable triple
             subject: null,
             predicate: null,
+            o_array: [],
 
-            //predicate
-
-            p_id: "",
-            p_name:"",
-            //object
-            o_array: {},
-
+            subject_id: "",
+            predicate_id: "",
+    
 
             //triples
-            tripels: []
+            tripels: [],
          
+            //utils
+            openModal: false,
 
         }
     },
     methods: {
+        addObjects(data){
+            this.o_array = data;
+            this.closeDialog();
+        },
         addIndividual(data){
-            console.log("hello")
+            console.log("add object")
             console.log(data)
-            this.individuals.push(data)
+            this.individuals[data.id] = data
             console.log(this.individuals)
+        },
+        addLiteral(data){
+            console.log("add Literal")
+            console.log(data)
+            this.literals[data.id] = data
+            console.log(this.literals)
+        },
+        removeLiteral(data){
+            delete this.literals[data]
+        },
+        removeIndividual(data){
+            delete this.individuals[data]
+
         },
         closeDialog(){
             this.openModal = false;
@@ -214,26 +353,42 @@ export default {
             return this.openModal
         },
         listClasses(){
-            console.log("hello")
-            this.$store.getters['ontologies/getClasses'];
-            this.$store.getters['ontologies/getPossibleTripels']("d5bf416f900c4f4098a502b44cd0c139");
-            this.$store.getters['ontologies/isInPossibleTripels']("d5bf416f900c4f4098a502b44cd0c139", {
-                subj: "3",
-                pred: "1431",
-                obj: "2"
-            });
+            console.log("Subj:")
+            console.log(this.subject)
+            console.log("Pred:")
+            console.log(this.predicate_id)
+            console.log("Obj:")
+            console.log(this.o_array)
+
+
+            this.tripels.push({
+                subject: this.subject,
+                predicate: this.predicate_id,
+                objects: this.o_array
+            })
+
+            this.subject =  null
+            this.predicate= null
+            this.o_array = []
+
+            this.subject_id = ""
+            this.predicate_id = ""
+            
+
         },
         onOntologySelectorChange(event){
             console.log(event.target.value)
         },
         onSubjectSelectorChange(event){
+            console.log(event.target.value)
              this.subject = {
                 "id": event.target.value,
-                "data":  this.$store.getters['ontologies/getClassData'](event.target.value)
+                // "data":  this.$store.getters['ontologies/getClassData'](event.target.value)
             }
         },
-        onPredicateSelectorChange(event){
-            console.log(event.target.value)
+        onPredicateSelectorChange(){
+          this.o_array = [] 
+     
         }
     },
     computed: {
@@ -248,8 +403,57 @@ export default {
         },
         chosenOntology(){
             return this.$store.getters['ontologies/getChosenOntology']
-        },            
-        }
+        },
+        ontologyRelations(){
+            return this.$store.getters['ontologies/getRelations']
+        },
+        checkedSubject(){
+            if(this.individuals.length > 0 && this.subject_id >= 0){
+                return this.individuals[this.subject_id]
+            }
+            return null
+        },
+        checkedPredicate(){
+
+            if(this.predicate_id != ""){
+                return this.$store.getters['ontologies/getRelations'][this.predicate_id]
+            }
+            return null
+        },
+        possibleSubjects(){
+
+            let output = ""
+            let subjs = this.checkedPredicate.subjs
+            subjs.forEach(element => {
+                output += (this.$store.getters['ontologies/getClassData'](element).name + ", ")
+            });
+            return output.substring(0, output.length - 2);
+        },
+        possibleObjects(){
+
+            let output = ""
+            if (this.checkedPredicate.is_functional == "1"){
+                output += "Object has to be a literal."
+            }else{
+                if(this.checkedPredicate.objs.length == 0){
+                    return "Error with predicate"
+                }
+                let objs = this.checkedPredicate.objs
+                objs.forEach(element => {
+                    output += (this.$store.getters['ontologies/getClassData'](element).name + ", ")
+                });
+                output = output.substring(0, output.length - 2);
+            }
+            return output
+        },
+        isFunctional() {
+
+            if(this.checkedPredicate){
+                return this.checkedPredicate.is_functional == "1"
+            }
+            return null
+    }
+    }
 }
 </script>
 
@@ -344,9 +548,43 @@ export default {
         margin-bottom: 50px;
     }
     .object{
-        text-align: center;
+        /* text-align: center; */
+    }
+    .tripel-part-data{
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+    .data-label{
+        font-weight: bold;
+    }
+  
+    .tripel-part{
+        width: 32%;
+        /* border: solid 1px #a2a2a2; */
+        padding: 10px;
+        margin-bottom: 20px;
+        grid-template-rows: 20px 50px 1fr 50px;
+        border-radius: 10px;
+        box-shadow: 0px 6px 10px rgb(0 0 0 / 25%);
+        color: #2b2b2b;
+        background: rgba(146,146,148, 0.5);
+        background: radial-gradient(circle, rgba(146,146,148,0.1) 20%, rgba(81, 93, 99, 0.3) 100%);
+        transition: all 200ms ease-in;
+
+    }
+    .tripel-part:hover{
+        transform: scale(1.02);
     }
 
+    .tripel-wrapper{
+        width:100%;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+
+    }
    
 </style>
 

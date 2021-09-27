@@ -4,60 +4,53 @@
     <transition name="dialog">
       <dialog open v-if="show">
 
+
+
           <div class="dialog-container">
             <div class="dialog-header">
             <h2>Objects</h2>
             </div>
-            
+                        
         <form ref="form" @submit.stop.prevent="handleSubmit">
 
-            
 
-         <!--    <div class="create-individual">
-                    <h3>Create new Individual</h3>
-                    <div class="inputs">
-                        <div class="form-floating mb-3">
-                            <select class="form-select" id="inputSelect" aria-label="Floating label select example">
-                                <option selected>Open this select menu</option>
-                                <option v-for="clo in classes_opts" :key="clo.value" :value="clo.value">{{clo.text}}</option>
-                            </select>
-                            <label for="inputSelect">Select class for individual</label>
-                            </div>
-
-                       <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="inputLabel" placeholder="name@example.com"/>
-                            <label for="inputLabel">Label</label>
-                        </div>
-
-                        <div class="form-floating">
-                            <textarea class="form-control" placeholder="Leave a comment here" id="inputDescription" style="height: 100px"></textarea>
-                            <label for="inputDescription">Comments</label>
-                         </div>
-
-                         <div class="submit-button-wrapper">
-                             <button class="btn btn-outline-primary">Create</button>
-                         </div>
-                    </div>
-                </div> 
-                <div>
-                    <hr>
-                </div> -->
-                <div>
-                <h3>Choose existent Individuals</h3>
-                 <!--    <div v-for="clo in classes_opts" :key="clo.value" class="form-group form-check">
+                <div v-if="isFunctional" class="options-wrapper">
+                <h3>Choose existent Literals</h3>
+                <h4>Creating literal can be done above the tripel</h4>
+                <div v-for="(lit, index) in literals" :key="index" class="form-group form-check">
                         <div class="class-description">
                             <div  class="class-description-cb">
-                                <input type="checkbox" v-model="selected" :id="clo.value" class="form-check-input">
+                                <input type="checkbox" v-model="selected" @change="updateChecked" :id="lit.id" :value="lit.id" class="form-check-input">
                             </div>
                             <div class="class-description-txt">
-                                <p >Description</p>
-                                <span>This is a description for this class and you should read it before you add it.</span>
+                                <p >Literal</p>
+                                <span>Value: {{lit.name}}</span>
                             </div>
 
                         </div>
-                </div>  -->
+                </div>  
+                                </div>  
+
+
+                <div v-if="!isFunctional" class="options-wrapper">
+                <h3>Choose existent individual (class objects)</h3>
+                <h4>Creating individual can be done above the tripel</h4>
+                <div v-for="(ind, index) in individuals" :key="index" class="form-group form-check">
+                        <div class="class-description">
+                            <div  class="class-description-cb">
+                                <input type="checkbox" v-model="selected" @change="updateChecked" :id="ind.id" :value="ind.id" class="form-check-input">
+                            </div>
+                            <div class="class-description-txt">
+                                <p >Object</p>
+                                <span>Name: {{ind.name}}</span>
+                                <span>Class: {{ind.classType}}</span>
+                                <span>Label: {{ind.label}}</span>
+                                <span>Comment: {{ind.comment}}</span>
+                            </div>
+
+                        </div>
+                </div>  
                 </div>
-                
                 
 
                 
@@ -71,7 +64,7 @@
                 </div>--> 
                 </form>
             <menu>
-                <button class="btn-lg btn-primary" @click="tryClose">Save & Close</button>
+                <button class="btn-lg btn-primary" :disabled="selected.length == 0" @click="saveClose">Save & Close</button>
                 <button class="btn-lg btn-primary" @click="closeDialog">Close</button>
             </menu>
 
@@ -86,7 +79,7 @@
 
 <script>
   export default {
-      props:['show','a_classes', 'subject', 'object'],
+      props:['show', 'isFunctional', 'literals', 'individuals'],
     data() {
       return {
         name: '',
@@ -96,11 +89,9 @@
         selected: [], 
       }
     },
-    emits: ['close'],
+    emits: ['close', 'save-close'],
     computed: {
-        classes(){
-            return this.$store.getters['ontologies/getClasses'];
-        },
+        
         valid(){
             return this.selected.length > 0
         },
@@ -137,38 +128,18 @@
             this.$emit('close');
             return;
         },
-        tryClose() {
-        if (this.fixed) {
-            return;
-        }
-        this.$emit('close');
+        saveClose() {
+        
+        console.log(this.selected)
+        this.$emit('save-close', this.selected);
+        this.selected = []
         },
       checkFormValidity() {
         const valid = this.$refs.form.checkValidity()
         this.nameState = valid
         return valid
       },
-      resetModal() {
-        this.name = ''
-        this.nameState = null
-      },
-      handleOk(bvModalEvt) {
-        // Prevent modal from closing
-        bvModalEvt.preventDefault()
-        // Trigger submit handler
-        this.handleSubmit()
-      },
       handleSubmit() {
-        // Exit when the form isn't valid
-        if (!this.checkFormValidity()) {
-          return
-        }
-        // Push the name to submitted names
-        this.submittedNames.push(this.name)
-        // Hide the modal manually
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-prevent-closing')
-        })
       }
     }
   }
@@ -259,7 +230,7 @@ menu {
 
 .class-description{
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 25px;
 }
 .class-description-cb{
     margin: auto;
@@ -268,6 +239,8 @@ menu {
 .class-description-txt{
     width: 90%;
     margin-left: 10px;
+        display: flex;
+    flex-direction: column;
 }
 .class-description-txt p{
     margin: 0;

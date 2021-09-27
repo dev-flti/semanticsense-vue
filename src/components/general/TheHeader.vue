@@ -23,9 +23,9 @@
         <li v-else>
           <router-link to="/auth">Login</router-link>
         </li>
-        <li>
+ <!--        <li>
           <base-button @click="logout" v-if="isLoggedIn"><i class="fa-solid fa-right-to-bracket"></i></base-button>
-        </li>
+        </li> -->
             </ul>
         </nav>
     </header>
