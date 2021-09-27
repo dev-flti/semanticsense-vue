@@ -6,10 +6,10 @@
             <div>
                 <ul>
                     <li>
-                        <router-link to="/imprint" v-if="!isLoggedIn">Imprint</router-link>
+                        <router-link to="/" v-if="!isLoggedIn">Imprint</router-link>
                     </li>
                     <li>
-                        <router-link to="/data-protection">Data protection</router-link>
+                        <router-link to="/">Data protection</router-link>
                     </li>
                 </ul>
             </div>

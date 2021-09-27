@@ -6,15 +6,9 @@
         :literals="literals"
         :individuals="individuals"></objects-modal>
         <div class="action-bar">
-           <div class="dropdown">
-                        <button class="dropdown-toggle btn btn-primary" type="button" id="subjectDropdownButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            Actions
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="subjectDropdownButton">
-                        <li><a class="dropdown-item" href="#">Semantic Hardware Web Ontology</a></li>
-                        <li><a class="dropdown-item" href="#">CMS-Blogcontent Ontology</a></li>
-                    </ul>
-                    </div>
+           <button class="btn-lg btn-primary" type="button" id="save" @click="saveAnnotation()"> 
+                            Save
+           </button>
         </div>
 
     <div class="accordion" id="metadata">
@@ -198,7 +192,7 @@
     </div>
     </div>
                 <div class="add-tripel-btn-section">
-                    <button class="btn-lg btn-primary" type="button" id="addTriple" @click="listClasses()"> 
+                    <button class="btn-lg btn-primary" type="button" id="addTriple" @click="addTripel()"> 
                             Add Triple
                         </button>
                 </div>
@@ -325,16 +319,16 @@ export default {
             this.closeDialog();
         },
         addIndividual(data){
-            console.log("add object")
-            console.log(data)
+            // console.log("add object")
+            // console.log(data)
             this.individuals[data.id] = data
-            console.log(this.individuals)
+            // console.log(this.individuals)
         },
         addLiteral(data){
-            console.log("add Literal")
-            console.log(data)
+            // console.log("add Literal")
+            // console.log(data)
             this.literals[data.id] = data
-            console.log(this.literals)
+            // console.log(this.literals)
         },
         removeLiteral(data){
             delete this.literals[data]
@@ -349,17 +343,16 @@ export default {
         },
         toggleObjectModal(){
             this.openModal = !this.openModal
-            console.log(this.openModal)
+            // console.log(this.openModal)
             return this.openModal
         },
-        listClasses(){
-            console.log("Subj:")
-            console.log(this.subject)
-            console.log("Pred:")
-            console.log(this.predicate_id)
-            console.log("Obj:")
-            console.log(this.o_array)
-
+        addTripel(){
+            // console.log("Subj:")
+            // console.log(this.subject)
+            // console.log("Pred:")
+            // console.log(this.predicate_id)
+            // console.log("Obj:")
+            // console.log(this.o_array)
 
             this.tripels.push({
                 subject: this.subject,
@@ -374,6 +367,7 @@ export default {
             this.subject_id = ""
             this.predicate_id = ""
             
+           // console.log(this.tripels)
 
         },
         onOntologySelectorChange(event){
@@ -388,7 +382,44 @@ export default {
         },
         onPredicateSelectorChange(){
           this.o_array = [] 
-     
+        },
+        saveAnnotation(){
+
+            let save_data = {
+                title: this.title,
+                author: this.author,
+                description: this.description,
+                date: this.date, 
+                individuals:{
+                },
+                literals: {       
+                },
+                relations:[]
+            }
+            this.tripels.forEach(e =>{
+                if (!e.subject.id in save_data.individuals){
+                    save_data.individuals[e.subject.id] = this.individuals[e.subject.id]
+                }
+
+                if(this.ontologyRelations[e.predicate].is_functional == "0"){
+                    Object.entries(e.objects).forEach(([key, value]) => {
+                        save_data.individuals[key] = value
+
+                    })
+                }else{
+                    Object.entries(e.objects).forEach(([key, value]) => {
+                        save_data.literals[key] = value
+                    })
+                }
+                
+                save_data.relations.push(e)
+
+                // console.log(e.subject)
+                // console.log(e.predicate)
+                // console.log(e.objects)
+                // console.log("save-data:")
+                // console.log(save_data)
+            })
         }
     },
     computed: {

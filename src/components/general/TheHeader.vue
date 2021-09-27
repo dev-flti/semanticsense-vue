@@ -5,27 +5,19 @@
                 SemanticSens
             </span>
             <ul>
-                <li>
-          <router-link to="/coaches">Annotation Pool</router-link>
-        </li>
-         <li>
-          <router-link to="/about" v-if="!isLoggedIn">About</router-link>
-        </li>
-         <li>
-          <router-link to="/docs">Docs</router-link>
+        <li>
+          <router-link to="/annotation-pool">Annotation Pool</router-link>
         </li>
         <li>
-          <router-link to="/docs">Settings</router-link>
+          <router-link to="/annotation-create">Create Annotation</router-link>
         </li>
-        <li v-if="isLoggedIn">
-          <router-link to="/requests">Projects</router-link>
+        <li >
+          <router-link to="/upload-ontology">Upload Ontology</router-link>
         </li>
-        <li v-else>
+        <!-- <li v-else>
           <router-link to="/auth">Login</router-link>
-        </li>
- <!--        <li>
-          <base-button @click="logout" v-if="isLoggedIn"><i class="fa-solid fa-right-to-bracket"></i></base-button>
         </li> -->
+ 
             </ul>
         </nav>
     </header>
