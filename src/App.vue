@@ -1,5 +1,5 @@
 <template>
-  <the-header></the-header>
+<the-header></the-header>
   <router-view v-slot="slotProps">
     <transition name="route" mode="out-in">
       <component :is="slotProps.Component"></component>
@@ -10,17 +10,18 @@
 </template>
 
 <script>
-import TheHeader from './components/general/TheHeader.vue';
 import TheFooter from './components/general/TheFooter.vue';
+import TheHeader from './components/general/TheHeader.vue';
 
 export default {
   components: {
     TheHeader,
     TheFooter
   },
-  data: () => ({
-    //
-  }),
+  data() {
+    return {
+    }
+  },
 }
 </script>
 

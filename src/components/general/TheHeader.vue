@@ -1,5 +1,5 @@
 <template>
-    <header>
+    <header v-if="['login'].indexOf($route.name) < 0">
         <nav>
             <span class="nav-headline">
                 SemanticSens
@@ -14,9 +14,9 @@
         <li >
           <router-link to="/upload-ontology">Upload Ontology</router-link>
         </li>
-        <!-- <li v-else>
-          <router-link to="/auth">Login</router-link>
-        </li> -->
+         <li >
+          <button class="btn-lg btn-primary" @click="logout">Logout</button>
+        </li> 
  
             </ul>
         </nav>
@@ -25,7 +25,12 @@
 
 <script>
 export default {
-    
+    methods:{
+      logout(){
+        //TODO: Logout function!!!! 
+        this.$router.push('/login')
+      }
+    }
 }
 </script>
 

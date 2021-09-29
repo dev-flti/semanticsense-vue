@@ -56,10 +56,15 @@
 
     <div class="ontology-wrapper d-flex mt-4">
         <div class="ontology-details ontology-dropdown">
-         <select class="form-select d-flex justify-content-center" @change="onOntologySelectorChange($event)" v-model="ontology_id" aria-label="Ontology Selector">
-                        <option selected>Select Ontology</option>
-                        <option v-for="ont in ontologies" :key="ont.id" :value="ont.id">{{ont.title}}</option>
-                    </select>
+
+        <div class="selector-label form-floating mb-3">
+            <select id="selectOntology" class="form-select d-flex justify-content-center" @change="onOntologySelectorChange($event)" v-model="ontology_id" aria-label="Ontology Selector">
+                <option selected>Select Ontology</option>
+                <option v-for="ont in ontologies" :key="ont.id" :value="ont.id">{{ont.title}}</option>
+            </select>
+            <label for="selectOntology">Select Ontology</label>
+        </div>
+    
         </div>
         <div class=" ontology-details">
             <div class="single-detail">
@@ -88,10 +93,15 @@
     <div class="annotation-create-item">
         <div class="add-annotation-section-header">
                     <h3>Subject</h3>
-                     <select class="form-select d-flex justify-content-center" aria-label="Default select example" @change="onSubjectSelectorChange($event)" v-model="subject_id">
-                        <option value="-1"  disabled>Select Subject Class</option>
-                        <option v-for="(sub, index) in individuals" :key="index" :value="index">{{sub.name}}</option>    
-                    </select>
+                    <div class="selector-label form-floating mb-3">
+                        <select class="form-select d-flex justify-content-center" aria-label="Default select example" @change="onSubjectSelectorChange($event)" v-model="subject_id">
+                            <option value="-1"  disabled>Select Subject Class</option>
+                            <option v-for="(sub, index) in individuals" :key="index" :value="index">{{sub.name}}</option>    
+                        </select>
+                        <label for="inputSelect">Select Subject</label>
+                    </div>
+
+                     
             </div>
             <div v-if="subject" class="triple-save p-2" >
                 <div class="triple-save-section">
@@ -118,10 +128,16 @@
       <div class="annotation-create-item">
         <div class="add-annotation-section-header">
                     <h3>Predicate</h3>
-                    <select class="form-select d-flex justify-content-center" aria-label="Default select example" @change="onPredicateSelectorChange()" v-model="predicate_id">
-                        <option value="-1" disabled selected>Select Predicate</option>
-                        <option v-for="pred in predicates" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
-                    </select>
+                    
+                    <div class="selector-label form-floating mb-3">
+                            <select class="form-select d-flex justify-content-center" id="inputSelect" aria-label="Default select example" @change="onPredicateSelectorChange()" v-model="predicate_id">
+                                <option value="-1" disabled selected>Select Predicate</option>
+                                <option v-for="pred in predicates" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
+                            </select>
+                            <label for="inputSelect">Select Predicate</label>
+                    </div>
+
+                    
             </div>
                   <div v-if="checkedPredicate" class="triple-save p-2" >
                     <div class="triple-save-section">
@@ -273,13 +289,14 @@
 </template>
 
 <script>
-import AnnotationTripel from '../../components/annotations/AnnotationTripel.vue'
 import AnnotationIndividual from '../../components/annotations/AnnotationIndividual.vue'
 import ObjectsModal from '../../components/annotations/ObjectsModal.vue'
+//import TheHeader from '../../components/general/TheHeader.vue';
+
 export default {
       components: {
-        AnnotationTripel,
             ObjectsModal,
+           // TheHeader,
         AnnotationIndividual,
   },
     data(){
@@ -310,7 +327,6 @@ export default {
          
             //utils
             openModal: false,
-
         }
     },
     methods: {
@@ -397,7 +413,7 @@ export default {
                 relations:[]
             }
             this.tripels.forEach(e =>{
-                if (!e.subject.id in save_data.individuals){
+                if (!(e.subject.id in save_data.individuals)){
                     save_data.individuals[e.subject.id] = this.individuals[e.subject.id]
                 }
 
@@ -423,6 +439,7 @@ export default {
         }
     },
     computed: {
+    
         ontologies(){
             return this.$store.getters['ontologies/ontologies'];
         },
@@ -517,9 +534,9 @@ export default {
         padding: 20px;
         background-color: #3B4018;
         color: white;
-        justify-content: center;
         display: flex;
         flex-direction: column;
+        height: 150px;
     }
     .add-annotation-section-header h3{
         text-align: center;
@@ -578,9 +595,7 @@ export default {
         display: flex;
         margin-bottom: 50px;
     }
-    .object{
-        /* text-align: center; */
-    }
+
     .tripel-part-data{
         display: flex;
         flex-wrap: wrap;
@@ -615,6 +630,10 @@ export default {
         justify-content: space-between;
         margin-bottom: 40px;
 
+    }
+    .selector-label{
+        color:#2b2b2b;
+        font-weight: 700;
     }
    
 </style>

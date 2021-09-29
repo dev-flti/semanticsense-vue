@@ -1,22 +1,26 @@
 <template>
+
     <div class="container">
-        <section>
-            Filter
-        </section>
         <div class="inner-container">
             <annotation-item v-for="item in loadAnnotations" 
-            :key="item.id" 
+            :key="item.id"
+            :id="item.id" 
             :title="item.projectName" 
             :description="item.description"
-            :creator="item.creator"></annotation-item>
+            :author="item.author"></annotation-item>
         </div>
     </div>
 </template>
 
 <script>
 import AnnotationItem from '../../components/annotations/AnnotationItem.vue'
+// import TheHeader from '../../components/general/TheHeader.vue';
+
 export default {
-    components: {AnnotationItem},
+    components: {
+        AnnotationItem, 
+    // TheHeader
+    },
     data() {
         return {
             

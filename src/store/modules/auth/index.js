@@ -3,13 +3,17 @@ import actions from './actions.js';
 import getters from './getters.js';
 
 export default{
-    state() {
-        return {
-          userId: null,
-          token: null, 
-          didAutoLogout: false
-        };
-      },
+    namespaced: true,
+    state: { 
+          authenticationData: {
+            token: "",
+            refreshToken: "",
+            expiration: "",
+            userId: "",
+          },
+          authStatus: ""
+          
+        },
       mutations,
       getters,
       actions

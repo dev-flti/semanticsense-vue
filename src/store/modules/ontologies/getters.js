@@ -1,7 +1,10 @@
 export default {
   
+    categories(state) {
+        return state.categories
+    },
     ontologies(state) {
-        return state.ontologies;
+        return state.ontologies
     },
     getClasses(state) {
         return state.chosenOntology.classes

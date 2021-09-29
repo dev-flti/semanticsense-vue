@@ -9,7 +9,7 @@ export default {
         annotations: [
             {
             id: 'a1',
-            creator: 'Universität Augsburg',
+            author: 'Universität Augsburg',
             projectName: 'Temperatursensor PT130',
             categories: ['temperature', 'consistent'],
             isPublic: true,
@@ -19,7 +19,7 @@ export default {
             },
             {
               id: 'a2',
-              creator: 'Siemens GmbH',
+              author: 'Siemens GmbH',
               projectName: 'Ultraschall Sensor U234',
               description: 'Ich bin ein Ultraschallsensor und verwirre gerne Fledermäuse',
               categories: ['sound', 'small'],
@@ -29,7 +29,7 @@ export default {
               },
             {
               id: 'a3',
-              creator: 'papillo GmbH',
+              author: 'papillo GmbH',
               projectName: 'Gassensor G123',
               description: 'Ich bin ein Gassensor und detektiere Gase - auch deine.',
               categories: ['gas', 'big'],
@@ -39,7 +39,7 @@ export default {
               },
             {
               id: 'a4',
-              creator: 'MusterFirma AG',
+              author: 'MusterFirma AG',
               projectName: 'Infrarotsensore',
               description: 'Ich bin ein SInfrarotsensor und sehe was, was du nicht siehst.',
               categories: ['infrared', 'detached'],
@@ -49,7 +49,7 @@ export default {
               },
             {
               id: 'a5',
-              creator: 'Siemens GmbH',
+              author: 'Siemens GmbH',
               projectName: 'Ultraschall Sensor U234',
               description: 'Ich bin ein Ultraschallsensor und verwirre gerne Fledermäuse',
               categories: ['sound', 'small'],
@@ -59,7 +59,7 @@ export default {
               },
             {
               id: 'a6',
-              creator: 'papillo GmbH',
+              author: 'papillo GmbH',
               projectName: 'Gassensor G123',
               description: 'Ich bin ein Gassensor und detektiere Gase - auch deine.',
               categories: ['gas', 'big'],
@@ -69,7 +69,7 @@ export default {
               },
             {
               id: 'a7',
-              creator: 'MusterFirma AG',
+              author: 'MusterFirma AG',
               projectName: 'Infrarotsensore',
               description: 'Ich bin ein SInfrarotsensor und sehe was, was du nicht siehst.',
               categories: ['infrared', 'detached'],
