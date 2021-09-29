@@ -9,6 +9,8 @@ requestHandler.interceptors.request.use((config) => {
     if (authData == null) {
       return config;
     }
+    
+    console.log("authData")
     console.log(authData)
     config.headers.common["Authorization"] = `Bearer ${authData.token}`;
     return config;
@@ -36,12 +38,16 @@ requestHandler.interceptors.request.use((config) => {
         console.log("reponse")
         console.log(response.data)
 
-        store.dispatch("auth/saveAuthenticationData", response.data);
+        store.commit("auth/saveAuthenticationData", {
+          access_token: response.data.access 
+        });
+
         error.config.headers[
           "Authorization"
         ] = `Bearer ${response.data.access}`;
         return axios(error.config);
       } else {
+        console.log("Test2")
         return Promise.reject(error);
       }
     }

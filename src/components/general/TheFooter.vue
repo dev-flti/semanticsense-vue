@@ -6,7 +6,7 @@
             <div>
                 <ul>
                     <li>
-                        <router-link to="/" v-if="!isLoggedIn">Imprint</router-link>
+                        <router-link to="/" >Imprint</router-link>
                     </li>
                     <li>
                         <router-link to="/">Data protection</router-link>

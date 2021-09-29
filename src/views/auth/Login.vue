@@ -64,6 +64,7 @@ export default {
                 password: this.password
             });
             if(this.getterLoginStatus === 'success'){
+                console.log("login success")
                 this.$router.push("/annotation-pool")
             }else{
                 alert('Failed to login - please check credentials')

@@ -58,7 +58,7 @@
         <div class="ontology-details ontology-dropdown">
 
         <div class="selector-label form-floating mb-3">
-            <select id="selectOntology" class="form-select d-flex justify-content-center" @change="onOntologySelectorChange($event)" v-model="ontology_id" aria-label="Ontology Selector">
+            <select id="selectOntology" class="form-select d-flex justify-content-center" @change="onOntologySelectorChange" v-model="ontology_id" aria-label="Ontology Selector">
                 <option selected>Select Ontology</option>
                 <option v-for="ont in ontologies" :key="ont.id" :value="ont.id">{{ont.title}}</option>
             </select>
@@ -66,7 +66,8 @@
         </div>
     
         </div>
-        <div class=" ontology-details">
+        <div v-if="chosenOntology" class="ontology-info-wrapper">
+        <div  class=" ontology-details">
             <div class="single-detail">
                 <span>Title</span>
                 <p>{{chosenOntology.title}}</p>
@@ -82,6 +83,7 @@
         </div>
             <div class="ontology-description">
           <p>{{chosenOntology.description}}</p>
+        </div>
         </div>
     </div>
 </div>
@@ -132,7 +134,7 @@
                     <div class="selector-label form-floating mb-3">
                             <select class="form-select d-flex justify-content-center" id="inputSelect" aria-label="Default select example" @change="onPredicateSelectorChange()" v-model="predicate_id">
                                 <option value="-1" disabled selected>Select Predicate</option>
-                                <option v-for="pred in predicates" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
+                                <option v-for="pred in predicate_list" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
                             </select>
                             <label for="inputSelect">Select Predicate</label>
                     </div>
@@ -289,6 +291,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import AnnotationIndividual from '../../components/annotations/AnnotationIndividual.vue'
 import ObjectsModal from '../../components/annotations/ObjectsModal.vue'
 //import TheHeader from '../../components/general/TheHeader.vue';
@@ -312,6 +315,10 @@ export default {
             individuals: {},
             literals: {},
             ontology_id: "",
+            subject_list: null,
+            predicate_list: null,
+            chosenOntology: null,
+            ontologyRelations: null,
 
             //variables current editable triple
             subject: null,
@@ -330,6 +337,10 @@ export default {
         }
     },
     methods: {
+        ...mapActions('ontologies', {
+            loadOntologyData: 'loadSingleOntology',
+            loadOntologiesList: 'loadOntologies'
+        }),
         addObjects(data){
             this.o_array = data;
             this.closeDialog();
@@ -383,11 +394,23 @@ export default {
             this.subject_id = ""
             this.predicate_id = ""
             
+            
            // console.log(this.tripels)
 
         },
-        onOntologySelectorChange(event){
-            console.log(event.target.value)
+        onOntologySelectorChange(){
+            console.log(this.ontology_id)
+
+            this.loadOntologyData(this.ontology_id)
+            
+
+            /* this.getSubjects()
+            this.getOntologyRelations()
+            this.getPredicates()*/
+            this.getChosenOntology() 
+
+            console.log(this.chosenOntology)
+
         },
         onSubjectSelectorChange(event){
             console.log(event.target.value)
@@ -436,25 +459,26 @@ export default {
                 // console.log("save-data:")
                 // console.log(save_data)
             })
-        }
+        },
+        getSubjects(){
+            this.subject_list = this.$store.getters['ontologies/getSubjects'];
+        },
+        getPredicates(){
+            this.predicate_list = this.$store.getters['ontologies/getPredicates'];
+        },
+        getChosenOntology(){
+            this.chosenOntology = this.$store.getters['ontologies/getChosenOntology']
+        },
+        getOntologyRelations(){
+            this.ontologyRelations =  this.$store.getters['ontologies/getRelations']
+        },
     },
     computed: {
     
         ontologies(){
             return this.$store.getters['ontologies/ontologies'];
         },
-        subjects(){
-            return this.$store.getters['ontologies/getSubjects'];
-        },
-        predicates(){
-            return this.$store.getters['ontologies/getPredicates'];
-        },
-        chosenOntology(){
-            return this.$store.getters['ontologies/getChosenOntology']
-        },
-        ontologyRelations(){
-            return this.$store.getters['ontologies/getRelations']
-        },
+        
         checkedSubject(){
             if(this.individuals.length > 0 && this.subject_id >= 0){
                 return this.individuals[this.subject_id]
@@ -501,6 +525,10 @@ export default {
             }
             return null
     }
+    },
+     created() {
+        
+        this.loadOntologiesList()
     }
 }
 </script>
@@ -634,6 +662,10 @@ export default {
     .selector-label{
         color:#2b2b2b;
         font-weight: 700;
+    }
+    .ontology-info-wrapper{
+        width:100%;
+        display: flex;
     }
    
 </style>

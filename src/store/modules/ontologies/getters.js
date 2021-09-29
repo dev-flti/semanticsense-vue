@@ -46,21 +46,26 @@ export default {
     getSubjects(_, getters){
         let tripels = getters.getPossibleTripels
         let subjectIds = []
-        tripels.forEach(ele => {
+        let subjects = []
+        if (tripels){
+            tripels.forEach(ele => {
             
                 if(!subjectIds.includes(ele.subj)){
                     subjectIds.push(ele.subj)
             }})
-        let subjects = []
+        
         subjectIds.forEach(e => {
             subjects.push({
                 id: e,
                 class_data: getters.getClasses[e]})
         })
+        }
+       
         return subjects;
     },
     getPredicates(_, getters){
         let predicates = [];
+        if(getters.getRelations)
         Object.entries(getters.getRelations).forEach(([key, value]) => {
             predicates.push({
                 "id": key,

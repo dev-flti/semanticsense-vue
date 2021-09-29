@@ -23,21 +23,19 @@ export default {
             title: "Sonstiges"
         }
     ],
-        ontologies: [{
-          id: "d5bf416f900c4f4098a502b44cd0c139",
-          title: "Semantic Hardware Web Ontology",
-          },
-          {
-            id: "absacfe416f900c4f4098a502b44cd0c139",
-            title: "Web Blog Ontology",
-          },
-          {
-            id: "qefqwerg6f900c4f4098a502b44cd0c139",
-            title: "E-Commerce Product Ontology",
-          },
-        ],
-        chosenOntology: {
-            "title": "Semantic Hardware Web Ontology",
+        ontologies: [],
+        chosenOntology: {}
+    },
+    getters,
+    mutations,
+    actions
+
+
+}
+
+/* 
+
+"title": "Semantic Hardware Web Ontology",
             "description": "This ontology provides the opportunity to annotate hardware components like sensors - so if you wanna annotate it then do it",
             "last_updated": "10/Sep/2021 11:37:49",
             "creation_date": "01/Sep/2021 10:34:43",
@@ -187,12 +185,6 @@ export default {
                   "name": "commands.hasProperty.some(commands.Property) & commands.hasSubCapability.some(commands.Capability) & commands.hasCommand.min(1, commands.Command) & commands.hasCommand.max(2, commands.Command) & commands.hasSuperCapability.max(1, commands.Capability)"
               }
           ],
-          
-          }
-    },
-    getters,
-    mutations,
-    actions
 
 
-}
+*/

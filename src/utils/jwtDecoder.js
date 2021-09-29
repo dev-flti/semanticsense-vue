@@ -10,15 +10,15 @@ export function jwtDecrypt(token) {
         .join("")
     );
       var data = JSON.parse(jsonPayload)
-      console.log(data)
+      // console.log(data)
     return data;
   }
 
   export function tokenAlive(exp) {
     if (Date.now() >= exp * 1000) {
-      console.log("tokenAlive:")
-      console.log(Date.now())
-      console.log(exp)
+      // console.log("tokenAlive:")
+      // console.log(Date.now())
+      // console.log(exp)
       return false;
     }
     return true;

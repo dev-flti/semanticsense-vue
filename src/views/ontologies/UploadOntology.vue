@@ -41,9 +41,13 @@
         </form>
     </div>   
 
-    <div class="list-sec">
-
-        here is a list 
+    <div class="ontology-list">
+        <div></div>
+        <div v-for="o in getOntologiesList" :key="o.id" class="ontology-list-item">
+            <p class="onto-title">{{o.title}}</p>
+            <p class="onto-description">{{o.description}}</p>
+        </div>
+        
     </div>
 </div>
 
@@ -51,7 +55,7 @@
 
 <script>
 // import TheHeader from '../../components/general/TheHeader.vue';
-import {mapActions} from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
     components:{
@@ -67,15 +71,20 @@ export default {
         },
     methods: {  
         ...mapActions('ontologies', {
-            loadOntologiesAction: 'loadOntologies'
+            loadOntologiesAction: 'loadOntologies',
+            uploadOntologyAction: 'uploadOntology'
         }),        
         
         async uploadOntology(){
             
-            
 
-            console.log("upload")
-            console.log(this.title + this.url + this.description + "  " + this.selectedCategory)
+
+
+            await this.uploadOntologyAction({
+                title: this.title,
+                url: this.url,
+                description: this.description
+            })
 
             await this.loadOntologiesAction()
             // await this.actionLogin({
@@ -85,10 +94,16 @@ export default {
             //     description: this.description
 
             // });
-
+            this.title = ""
+            this.url = ""
+            this.description = ""
+            this.selectedCategory = null
         }
     },
     computed: {
+        ...mapGetters('ontologies', {
+            getOntologiesList: 'ontologies'
+        }),
         isValid(){
             if(this.title != "" && this.url != "" && this.description != "")
                 return true
@@ -99,9 +114,50 @@ export default {
             return this.$store.getters['ontologies/categories']
         }
     },
+    created() {
+        
+        this.loadOntologiesAction()
+    }
     }
 </script>
 
 <style scoped>
+.info-section{
+    margin-bottom: 50px;
+}
+.form-section{
+    
+}
+ .ontology-list{
+     display: flex;
+     flex-wrap: wrap;
+     margin-top: 50px;
 
+ }
+ .ontology-list-item{
+     margin-bottom:40px;
+     margin-left: 40px;
+     margin-top: 0;
+
+     width: 23%;
+     padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 10px rgb(0 0 0 / 25%);
+    color: #2b2b2b;
+    background: rgba(146,146,148, 0.5);
+    background: radial-gradient(circle, rgba(146,146,148,0.1) 20%, rgba(81, 93, 99, 0.3) 100%);
+    transition: all 200ms ease-in;
+
+    }
+    .ontology-list-item:hover{
+        transform: scale(1.02);
+    }
+    .onto-description{
+
+    }
+
+    .onto-title{
+        font-size: 17px;
+        font-weight: 600;
+    }
 </style>

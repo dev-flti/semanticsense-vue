@@ -1,3 +1,5 @@
+import axios from "axios"
+
 //let timer;
 export default {
     async login(context, payload){
@@ -6,33 +8,37 @@ export default {
         email: payload.email,
         password: payload.password,
         returnSecureToken: true})
-        console.log(data)
+        // console.log(data)
 
-        await fetch("http://localhost:8000/api/user/token-auth/", {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json',
-          },
-        body: data
-    }).then(response => response.json())
-    .then((data) => {
-        if ( data) {
-            console.log(data)
-          context.commit('saveAuthenticationData', {
-              access_token: data.authCredentials.access,
-              refresh_token: data.authCredentials.refresh,
-          })
-          context.commit('setAuthStatus', "success")
-        } else {
-          context.commit('setAuthStatus', "failed")
+        const headers = {
+          'Content-Type': 'application/json',
         }
-    })
-    .catch((err) => {
-        console.log("Error after fetching")
-        console.log(err);
-      })
+        const response = await axios
+        .post("http://localhost:8000/api/user/token-auth/", data, {
+          headers: headers
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+        if (response && response.data) {
+          console.log(response.data)
+          // console.log(response.data)
+          context.commit("saveAuthenticationData", {
+                        access_token: response.data.authCredentials.access,
+                        refresh_token: response.data.authCredentials.refresh,
+                        userId: response.data.user.id
+                    });
+          context.commit("setAuthStatus", "success");
+        } else {
+          context.commit("setAuthStatus", "failed");
+        }     
+    },
+        logout(context) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('userId');
 
-     
+        context.commit('clearAuthenticationData')
     },
     // signup(context, payload){
     //     return context.dispatch('auth', {

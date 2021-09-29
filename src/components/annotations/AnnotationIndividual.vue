@@ -182,11 +182,15 @@ export default {
     computed: {
         classes() {
             let classes_arr = []
-            Object.entries(this.$store.getters['ontologies/getClasses']).forEach(([key, value]) => {
-                let val = value;
-                val["id"] = key;
-                classes_arr.push(val)
-        });
+            let loaded = this.$store.getters['ontologies/getClasses']
+            if(loaded && loaded.length>0){
+
+                Object.entries().forEach(([key, value]) => {
+                    let val = value;
+                    val["id"] = key;
+                    classes_arr.push(val)
+            });
+            }
             return classes_arr;
         },
         buttonEnabled() {

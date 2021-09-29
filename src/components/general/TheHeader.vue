@@ -24,11 +24,18 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex';
+
 export default {
     methods:{
-      logout(){
-        //TODO: Logout function!!!! 
-        this.$router.push('/login')
+        ...mapActions('auth', {
+            actionLogout: 'logout'
+        }),      
+        
+        logout(){
+          console.log("logout")
+          this.actionLogout()
+          this.$router.push('/login')
       }
     }
 }
