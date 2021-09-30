@@ -53,7 +53,8 @@ export default {
     },
     methods: {
         ...mapActions('auth', {
-            actionLogin: 'login'
+            actionLogin: 'login',
+            actionRegister: 'createUser'
         }),
         handleSubmit(){
             console.log("login")
@@ -69,6 +70,16 @@ export default {
             }else{
                 alert('Failed to login - please check credentials')
             }
+        },
+        async register(){
+            let success = await this.actionRegister({
+                email: this.email,
+                password: this.password,
+                name: "Unknown"
+            });
+
+            alert(success ? "Successfully registered" : "Error registering new user")
+            
         }
     }
 }

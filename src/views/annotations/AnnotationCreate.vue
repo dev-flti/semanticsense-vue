@@ -76,10 +76,6 @@
                 <span>Creation Date:</span>
                 <p>{{chosenOntology.creation_date}}</p>
             </div>
-             <div class="single-detail">
-                <span>Last Updated:</span>
-                <p>{{chosenOntology.last_updated}}</p>
-            </div>
         </div>
             <div class="ontology-description">
           <p>{{chosenOntology.description}}</p>
@@ -133,8 +129,10 @@
                     
                     <div class="selector-label form-floating mb-3">
                             <select class="form-select d-flex justify-content-center" id="inputSelect" aria-label="Default select example" @change="onPredicateSelectorChange()" v-model="predicate_id">
-                                <option value="-1" disabled selected>Select Predicate</option>
-                                <option v-for="pred in predicate_list" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
+                                <option value="-1" disabled selected>Object Relations</option>
+                                <option v-for="pred in ontologyRelations_f" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
+                                <option value="-2" disabled selected>Literal Relations</option>
+                                <option v-for="pred in ontologyRelations_nf" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
                             </select>
                             <label for="inputSelect">Select Predicate</label>
                     </div>
@@ -250,7 +248,7 @@
                 <p>{{ontologyRelations[tripel.predicate].relation_name}}</p>
             </div>
       </div>
-      <div v-if="ontologyRelations[tripel.predicate].is_functional == '0'" class="tripel-part">
+      <div v-if="is_functional" class="tripel-part">
              <div  v-for="(o, index) in tripel.objects" :key="index" class="triple-save-section">
                     <div class="tripel-part-data">
                         <span class="data-label">Name</span>
@@ -315,10 +313,12 @@ export default {
             individuals: {},
             literals: {},
             ontology_id: "",
-            subject_list: null,
-            predicate_list: null,
+            subject_list: [],
+            predicate_list: [],
             chosenOntology: null,
-            ontologyRelations: null,
+            ontologyRelations_f: null,
+            ontologyRelations_nf: null,
+            possibleTriples: [],
 
             //variables current editable triple
             subject: null,
@@ -334,6 +334,7 @@ export default {
          
             //utils
             openModal: false,
+            is_functional: false
         }
     },
     methods: {
@@ -349,12 +350,12 @@ export default {
             // console.log("add object")
             // console.log(data)
             this.individuals[data.id] = data
-            // console.log(this.individuals)
         },
         addLiteral(data){
             // console.log("add Literal")
             // console.log(data)
             this.literals[data.id] = data
+            
             // console.log(this.literals)
         },
         removeLiteral(data){
@@ -398,18 +399,22 @@ export default {
            // console.log(this.tripels)
 
         },
-        onOntologySelectorChange(){
+        async onOntologySelectorChange(){
             console.log(this.ontology_id)
 
-            this.loadOntologyData(this.ontology_id)
+            await this.loadOntologyData(this.ontology_id)
             
 
-            /* this.getSubjects()
+            this.getSubjects()
             this.getOntologyRelations()
-            this.getPredicates()*/
+            this.getPredicates()
             this.getChosenOntology() 
 
+            console.log(this.subject_list)
+            console.log(this.ontologyRelations)
+
             console.log(this.chosenOntology)
+            this.isFunctional()
 
         },
         onSubjectSelectorChange(event){
@@ -423,7 +428,6 @@ export default {
           this.o_array = [] 
         },
         saveAnnotation(){
-
             let save_data = {
                 title: this.title,
                 author: this.author,
@@ -468,10 +472,21 @@ export default {
         },
         getChosenOntology(){
             this.chosenOntology = this.$store.getters['ontologies/getChosenOntology']
+            console.log(this.chosenOntology)
         },
         getOntologyRelations(){
-            this.ontologyRelations =  this.$store.getters['ontologies/getRelations']
+            this.ontologyRelations_f =  this.$store.getters['ontologies/getRelations']["functional"]
+            this.ontologyRelations_nf =  this.$store.getters['ontologies/getRelations']["not_functional"]
+
         },
+        getPossibleTripels(){
+            this.ontologyRelations =  this.$store.getters['ontologies/getPossibleTripels']
+        },
+        isFunctional() {
+            if(this.ontologyRelations_f && this.ontologyRelations_nf){
+                this.is_functional = (this.predicate in this.ontologyRelations_f)
+            }
+        }
     },
     computed: {
     
@@ -518,13 +533,7 @@ export default {
             }
             return output
         },
-        isFunctional() {
-
-            if(this.checkedPredicate){
-                return this.checkedPredicate.is_functional == "1"
-            }
-            return null
-    }
+        
     },
      created() {
         

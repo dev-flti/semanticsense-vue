@@ -42,11 +42,7 @@
     </div>   
 
     <div class="ontology-list">
-        <div></div>
-        <div v-for="o in getOntologiesList" :key="o.id" class="ontology-list-item">
-            <p class="onto-title">{{o.title}}</p>
-            <p class="onto-description">{{o.description}}</p>
-        </div>
+        <ontology-item v-for="o in getOntologiesList" :key="o.id" :id="o.id" :title="o.title" :description="o.description"></ontology-item>        
         
     </div>
 </div>
@@ -56,13 +52,17 @@
 <script>
 // import TheHeader from '../../components/general/TheHeader.vue';
 import {mapActions, mapGetters} from 'vuex';
+import OntologyItem from '../../components/ontologies/OntologyItem.vue';
 
 export default {
     components:{
+        OntologyItem,
         // TheHeader,
+
     },
     data(){
-            return {
+    
+        return {
                 title: "",
                 url: "",
                 description:"",
@@ -72,13 +72,10 @@ export default {
     methods: {  
         ...mapActions('ontologies', {
             loadOntologiesAction: 'loadOntologies',
-            uploadOntologyAction: 'uploadOntology'
+            uploadOntologyAction: 'uploadOntology',
         }),        
         
         async uploadOntology(){
-            
-
-
 
             await this.uploadOntologyAction({
                 title: this.title,
@@ -134,30 +131,5 @@ export default {
      margin-top: 50px;
 
  }
- .ontology-list-item{
-     margin-bottom:40px;
-     margin-left: 40px;
-     margin-top: 0;
-
-     width: 23%;
-     padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0px 6px 10px rgb(0 0 0 / 25%);
-    color: #2b2b2b;
-    background: rgba(146,146,148, 0.5);
-    background: radial-gradient(circle, rgba(146,146,148,0.1) 20%, rgba(81, 93, 99, 0.3) 100%);
-    transition: all 200ms ease-in;
-
-    }
-    .ontology-list-item:hover{
-        transform: scale(1.02);
-    }
-    .onto-description{
-
-    }
-
-    .onto-title{
-        font-size: 17px;
-        font-weight: 600;
-    }
+ 
 </style>

@@ -10,29 +10,29 @@ export default {
         return state.chosenOntology.classes
     },
     getRelations(state) {
-        return state.chosenOntology.relations
+        return state.chosenOntology.properties
     },
     getPossibleTripels(state) {
-        let relations = state.chosenOntology.relations;
-        let tripels = [];
-        Object.entries(relations).forEach(([key, value]) => {
-            value.subjs.forEach(subject => {
-                value.objs.forEach(object => {
-                    tripels.push({
-                        subj: subject,
-                        pred: key,
-                        obj: object
-                    })
-                })
-            });
-        });
-        return tripels
+        // let relations = state.chosenOntology.relations;
+        // let tripels = [];
+        // Object.entries(relations).forEach(([key, value]) => {
+        //     value.subjs.forEach(subject => {
+        //         value.objs.forEach(object => {
+        //             tripels.push({
+        //                 subj: subject,
+        //                 pred: key,
+        //                 obj: object
+        //             })
+        //         })
+        //     });
+        // });
+        return state.chosenOntology.possible_tripels
     },
     isInPossibleTripels: (_, getters) => (testObj) => {
         
         let tripels = getters.getPossibleTripels;
 
-        if(tripels.some(tripel => tripel.subj === testObj.subj && tripel.pred === testObj.pred && tripel.obj === testObj.obj)){
+        if(tripels.some(tripel => tripel.subj.id === testObj.subj.id && tripel.pred.id === testObj.pred.id && tripel.obj.id === testObj.obj.id)){
             //console.log("true")
             return true
         } else{
@@ -44,14 +44,17 @@ export default {
         return getters.getClasses[id]
     },
     getSubjects(_, getters){
+        
+
         let tripels = getters.getPossibleTripels
         let subjectIds = []
         let subjects = []
         if (tripels){
             tripels.forEach(ele => {
-            
-                if(!subjectIds.includes(ele.subj)){
-                    subjectIds.push(ele.subj)
+                if(ele.predicate.id in getters.getRelations['not_functional'] ){
+                    if(!subjectIds.includes(ele.subj.id)){
+                        subjectIds.push(ele.subj.id)
+                }
             }})
         
         subjectIds.forEach(e => {

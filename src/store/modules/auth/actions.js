@@ -1,7 +1,36 @@
 import axios from "axios"
+import { getBackendBaseUrl, getUserCreateEndpoint, getUserTokenAuthEndpoint } from "../../../utils/envHelper";
 
 //let timer;
 export default {
+    async createUser(_, payload){
+        let data = JSON.stringify({
+          email: payload.email,
+          password: payload.password,
+          name: payload.name})
+          // console.log(data)
+
+        const url = getBackendBaseUrl() + getUserCreateEndpoint()
+        
+        const headers = {
+          'Content-Type': 'application/json',
+        }
+
+        console.log(data)
+        const response = await axios
+        .post(url , data, {
+          headers: headers
+        })
+        .catch((err) => {
+          console.log(err);
+
+
+        });
+        if (response)
+          return true
+        return false
+
+    },
     async login(context, payload){
 
        let data = JSON.stringify({
@@ -9,12 +38,13 @@ export default {
         password: payload.password,
         returnSecureToken: true})
         // console.log(data)
+        const url = getBackendBaseUrl() + getUserTokenAuthEndpoint()
 
         const headers = {
           'Content-Type': 'application/json',
         }
         const response = await axios
-        .post("http://localhost:8000/api/user/token-auth/", data, {
+        .post(url, data, {
           headers: headers
         })
         .catch((err) => {

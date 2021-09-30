@@ -1,5 +1,5 @@
 import requestHandler from "../../../utils/requestHandler"
-import { getBackendBaseUrl, getOntologieListEndpoint, getOntologyDataEndpoint, getOntologyImportEndpoint} from "../../../utils/envHelper"
+import { getBackendBaseUrl, getOntologieListEndpoint, getOntologyDataEndpoint, getOntologyDeleteEndpoint, getOntologyImportEndpoint} from "../../../utils/envHelper"
 
 export default {
     async loadOntologies(context){
@@ -22,6 +22,20 @@ export default {
         if(response && response.data){
             context.commit('setChosenOntology', response.data);
         }
+    },
+    async deleteOntology(context, data){
+        const url = getBackendBaseUrl() + getOntologyDeleteEndpoint()
+        const params = {
+            'id': data,
+        }
+        await requestHandler.delete(url, {
+            params: params
+          })
+        console.log("deleted")
+        context.dispatch('loadOntologies')
+        console.log("reloaded")
+
+        
     },
     async uploadOntology(_, data){
         const url = getBackendBaseUrl() + getOntologyImportEndpoint()
@@ -51,4 +65,6 @@ export default {
     }
 }
 
-// https://nx16910.your-storageshare.de/s/B5noPtzXG7X2PXE/download/semantichardwarewebontology_old.owl
+/*   
+https://nx16910.your-storageshare.de/s/B5noPtzXG7X2PXE/download/semantichardwarewebontology_old.owl 
+*/

@@ -34,6 +34,8 @@ export default {
 }
 
 /* 
+https://nx16910.your-storageshare.de/s/B5noPtzXG7X2PXE/download/semantichardwarewebontology_old.owl
+
 
 "title": "Semantic Hardware Web Ontology",
             "description": "This ontology provides the opportunity to annotate hardware components like sensors - so if you wanna annotate it then do it",

@@ -14,6 +14,9 @@ export function getAnnotationDataEndpoint(){
 export function getOntologieListEndpoint(){
     return process.env.VUE_APP_GET_ONTOLOGIES_ENDPOINT
 }
+export function getOntologyDeleteEndpoint(){
+    return process.env.VUE_APP_ONTOLOGY_DELETE_ENDPOINT
+}
 export function getOntologyDataEndpoint(){
     return process.env.VUE_APP_GET_ONTOLOGY_DATA_ENDPOINT
 }
@@ -29,7 +32,7 @@ export function getUserTokenRefreshEndpoint(){
     return process.env.VUE_APP_USER_TOKEN_REFRESH_ENDPOINT
 }
 export function getUserCreateEndpoint(){
-    return process.env.VUE_APP_GET_ONTOLOGIES_ENDPOINT
+    return process.env.VUE_APP_USER_CREATE_ENDPOINT
 }
 export function getUserTokenAuthEndpoint(){
     return process.env.VUE_APP_USER_TOKEN_AUTH_ENPOINT
