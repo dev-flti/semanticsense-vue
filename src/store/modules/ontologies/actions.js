@@ -14,11 +14,11 @@ export default {
             'id': data,
         }
         const url = getBackendBaseUrl() + getOntologyDataEndpoint()
-        console.log(url)
+        // console.log(url)
         let response = await requestHandler.get(url, {
             params: params
         })
-        console.log(response.data)
+        // console.log(response.data)
         if(response && response.data){
             context.commit('setChosenOntology', response.data);
         }
@@ -31,16 +31,16 @@ export default {
         await requestHandler.delete(url, {
             params: params
           })
-        console.log("deleted")
+        // console.log("deleted")
         context.dispatch('loadOntologies')
-        console.log("reloaded")
+        // console.log("reloaded")
 
         
     },
     async uploadOntology(_, data){
         const url = getBackendBaseUrl() + getOntologyImportEndpoint()
-        console.log("url")
-        console.log(url)
+        // console.log("url")
+        // console.log(url)
         const headers = {
             'Content-Type': 'application/json',
           }
@@ -52,16 +52,16 @@ export default {
             description: data.description
         }
 
-        console.log(payload)
-        const response = await requestHandler.post(url, payload, {
+        // console.log(payload)
+        /* const response = */ await requestHandler.post(url, payload, {
           headers: headers
         })
         .catch((err) => {
-          console.log(err);
+           alert(err);
         });
 
-        console.log("response")
-        console.log(response)
+        // console.log("response")
+        // console.log(response)
     }
 }
 

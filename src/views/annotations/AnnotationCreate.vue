@@ -4,9 +4,10 @@
         :show="openModal" 
         :isFunctional="checkedPredicate.is_functional == '1'" @save-close="addObjects" @close="closeDialog"
         :literals="literals"
-        :individuals="individuals"></objects-modal>
+        :individuals="individuals"
+        :classes="classes"></objects-modal>
         <div class="action-bar">
-           <button class="btn-lg btn-primary" type="button" id="save" @click="saveAnnotation()"> 
+           <button class="btn-lg btn-primary" type="button" id="save" :disabled="tripels.length == 0" @click="saveAnnotation()"> 
                             Save
            </button>
         </div>
@@ -59,7 +60,7 @@
 
         <div class="selector-label form-floating mb-3">
             <select id="selectOntology" class="form-select d-flex justify-content-center" @change="onOntologySelectorChange" v-model="ontology_id" aria-label="Ontology Selector">
-                <option selected>Select Ontology</option>
+                <option selected disabled>Select Ontology</option>
                 <option v-for="ont in ontologies" :key="ont.id" :value="ont.id">{{ont.title}}</option>
             </select>
             <label for="selectOntology">Select Ontology</label>
@@ -109,7 +110,7 @@
                  </div>
                  <div class="tripel-part-data">
                         <span class="data-label">Class Type</span>
-                        <span>{{individuals[subject.id].classType}}</span>
+                        <span>{{classes[individuals[subject.id].classId].name}}</span>
                     </div>
                  <div class="tripel-part-data">
                     <span class="data-label">Label</span>
@@ -143,15 +144,15 @@
                     <div class="triple-save-section">
                     <div class="tripel-part-data">
                         <span class="data-label">Name</span>
-                        <span>{{checkedPredicate.relation_name}}</span>
+                        <span>{{checkedPredicate.name}}</span>
                     </div>
-                    <div class="tripel-part-data">
+                    <div v-if="!checkedPredicate.is_functional" class="tripel-part-data">
                         <span class="data-label">Subjects</span>
-                        <span>{{possibleSubjects}}</span>
+                        <span>{{possibleSubjectsObjects.subj_output}}</span>
                     </div>
-                    <div class="tripel-part-data">
+                    <div v-if="!checkedPredicate.is_functional" class="tripel-part-data">
                         <span class="data-label">Objects</span>
-                        <span>{{possibleObjects}}</span>
+                        <span>{{possibleSubjectsObjects.obj_output}}</span>
                     </div>
                     </div>
                 </div>
@@ -167,15 +168,16 @@
                     <span v-if="checkedPredicate && o_array.length == 0" class="">Please choose object or literal</span>
                     <span v-if="!checkedPredicate" class="">First select predicate</span>
                 
-                <div v-if="!isFunctional && o_array.length > 0">
-                <div  v-for="(o, index) in o_array" :key="index" class="triple-save-section">
+                <div v-if="checkedPredicate">
+                <div v-if="!checkedPredicate.is_functional && o_array.length > 0">
+                 <div  v-for="(o) in o_array" :key="o" class="triple-save-section">
                     <div class="tripel-part-data">
                         <span class="data-label">Name</span>
                         <span>{{individuals[o].name}}</span>
                     </div>
                     <div class="tripel-part-data">
                         <span class="data-label">Class Type</span>
-                        <span>{{individuals[o].classType}}</span>
+                        <span>{{classes[individuals[o].classId].name}}</span>
                     </div>
                     <div class="tripel-part-data">
                         <span class="data-label">Label</span>
@@ -191,7 +193,7 @@
                     </div>
             </div>    
 
-            <div v-if="isFunctional && o_array.length > 0">
+            <div v-if="checkedPredicate.is_functional && o_array.length > 0">
                 <div  v-for="(o, index) in o_array" :key="index" class="triple-save-section">
                     <div class="tripel-part-data">
                         <span class="data-label">Value</span>
@@ -201,7 +203,8 @@
                         <hr>
                     </div>
                 </div>
-            </div>   
+            </div>  
+            </div> 
 
             </div>
         </div>
@@ -223,32 +226,40 @@
       <div class="tripel-part">
         <div> 
             <span class="data-label">Name:</span>
-            <p>{{individuals[tripel.subject.id].name}}</p>
+            <p>{{individuals[tripel.subject].name}}</p>
         </div>
         <div> 
             <span class="data-label">Label:</span>
-            <p>{{individuals[tripel.subject.id].label}}</p>
+            <p>{{individuals[tripel.subject].label}}</p>
         </div>
         <div> 
             <span class="data-label">Comment:</span>
-            <p>{{individuals[tripel.subject.id].comment}}</p>
+            <p>{{individuals[tripel.subject].comment}}</p>
         </div>
           <div> 
             <span class="data-label">Id:</span>
-            <p>{{individuals[tripel.subject.id].id}}</p>
+            <p>{{individuals[tripel.subject].id}}</p>
         </div>
       </div>
       <div class="tripel-part">
             <div> 
                 <span class="data-label">Id</span>
-                <p>{{tripel.predicate}}</p>
+                <p>{{tripel.predicate.id}}</p>
             </div>
             <div> 
+                <span class="data-label">Is Functional?</span>
+                <p>{{tripel.predicate.is_functional ? "Only Literals possible" : "Only Objects Possible"}}</p>
+            </div>
+            <!-- <div v-if="!tripel.predicate.is_functional"> 
                 <span class="data-label">Name</span>
-                <p>{{ontologyRelations[tripel.predicate].relation_name}}</p>
+                <p>{{predicate_list["not_functional"][tripel.predicate.id].name}}</p>
+            </div> -->
+            <div> 
+                <span class="data-label">Name</span>
+                <p>{{tripel.predicate.name}}</p>
             </div>
       </div>
-      <div v-if="is_functional" class="tripel-part">
+      <div v-if="!tripel.predicate.is_functional" class="tripel-part">
              <div  v-for="(o, index) in tripel.objects" :key="index" class="triple-save-section">
                     <div class="tripel-part-data">
                         <span class="data-label">Name</span>
@@ -256,7 +267,7 @@
                     </div>
                     <div class="tripel-part-data">
                         <span class="data-label">Class Type</span>
-                        <span>{{individuals[o].classType}}</span>
+                        <span>{{classes[individuals[o].classId].name}}</span>
                     </div>
                     <div class="tripel-part-data">
                         <span class="data-label">Label</span>
@@ -271,7 +282,7 @@
                     </div>
                     </div>
       </div>
-          <div v-else class="tripel-part">
+          <div v-if="tripel.predicate.is_functional" class="tripel-part">
              <div  v-for="(o, index) in tripel.objects" :key="index" class="triple-save-section">
                     <div class="tripel-part-data">
                         <span class="data-label">Value</span>
@@ -319,12 +330,12 @@ export default {
             ontologyRelations_f: null,
             ontologyRelations_nf: null,
             possibleTriples: [],
+            classes: null,
 
             //variables current editable triple
             subject: null,
             predicate: null,
             o_array: [],
-
             subject_id: "",
             predicate_id: "",
     
@@ -334,7 +345,7 @@ export default {
          
             //utils
             openModal: false,
-            is_functional: false
+            // is_functional: null
         }
     },
     methods: {
@@ -343,7 +354,12 @@ export default {
             loadOntologiesList: 'loadOntologies'
         }),
         addObjects(data){
+            // console.log("hii")
             this.o_array = data;
+            //  console.log(this.o_array)
+            //  console.log(this.individuals)
+            // console.log(this.literals)
+
             this.closeDialog();
         },
         addIndividual(data){
@@ -371,7 +387,8 @@ export default {
         },
         toggleObjectModal(){
             this.openModal = !this.openModal
-            // console.log(this.openModal)
+            
+
             return this.openModal
         },
         addTripel(){
@@ -383,24 +400,22 @@ export default {
             // console.log(this.o_array)
 
             this.tripels.push({
-                subject: this.subject,
-                predicate: this.predicate_id,
+                subject: this.subject_id,
+                predicate: this.checkedPredicate,
                 objects: this.o_array
             })
 
-            this.subject =  null
-            this.predicate= null
-            this.o_array = []
 
+            
+            // this.is_functional = null
+            this.subject =  null
+            this.predicate = null
+            this.o_array = []
             this.subject_id = ""
             this.predicate_id = ""
-            
-            
-           // console.log(this.tripels)
-
         },
         async onOntologySelectorChange(){
-            console.log(this.ontology_id)
+            // console.log(this.ontology_id)
 
             await this.loadOntologyData(this.ontology_id)
             
@@ -409,25 +424,39 @@ export default {
             this.getOntologyRelations()
             this.getPredicates()
             this.getChosenOntology() 
+            this.getPossibleTripels()
+            this.getClasses()
 
-            console.log(this.subject_list)
-            console.log(this.ontologyRelations)
+            // console.log(this.subject_list)
+            // console.log(this.ontologyRelations)
 
-            console.log(this.chosenOntology)
-            this.isFunctional()
+            // console.log(this.chosenOntology)
+            this.subject = null
+            this.predicate = null
+            this.o_array = []
+            this.individuals= {}
+            this.literals= {}
+            this.tripels = []
+            // this.is_functional = false
 
         },
         onSubjectSelectorChange(event){
-            console.log(event.target.value)
+            // console.log(event.target.value)
              this.subject = {
                 "id": event.target.value,
                 // "data":  this.$store.getters['ontologies/getClassData'](event.target.value)
             }
         },
         onPredicateSelectorChange(){
-          this.o_array = [] 
+          this.o_array = []          
+        //  this.isFunctional()
+        //   console.log("hi")
+          //console.log(this.predicate_id)
+          //console.log(this.checkedPredicate)
+
         },
         saveAnnotation(){
+            console.log(this.tripels)
             let save_data = {
                 title: this.title,
                 author: this.author,
@@ -440,53 +469,58 @@ export default {
                 relations:[]
             }
             this.tripels.forEach(e =>{
-                if (!(e.subject.id in save_data.individuals)){
-                    save_data.individuals[e.subject.id] = this.individuals[e.subject.id]
+                if (!(e.subject in save_data.individuals)){
+                    save_data.individuals[e.subject] = this.individuals[e.subject]
                 }
 
-                if(this.ontologyRelations[e.predicate].is_functional == "0"){
+                if(e.predicate.is_functional == "0"){
                     Object.entries(e.objects).forEach(([key, value]) => {
                         save_data.individuals[key] = value
-
+                        save_data.relations.push(e)
                     })
                 }else{
                     Object.entries(e.objects).forEach(([key, value]) => {
                         save_data.literals[key] = value
+
+                        save_data.relations.push({
+                            subject: this.individuals[e.subject],
+                            predicate: e.predicate,
+                            object: value
+                        })
                     })
                 }
                 
-                save_data.relations.push(e)
+                
 
                 // console.log(e.subject)
                 // console.log(e.predicate)
                 // console.log(e.objects)
-                // console.log("save-data:")
-                // console.log(save_data)
+                 console.log("save-data:")
+                 console.log(save_data)
             })
         },
         getSubjects(){
             this.subject_list = this.$store.getters['ontologies/getSubjects'];
         },
         getPredicates(){
-            this.predicate_list = this.$store.getters['ontologies/getPredicates'];
+            this.predicate_list = this.$store.getters['ontologies/getRelations'];
         },
         getChosenOntology(){
             this.chosenOntology = this.$store.getters['ontologies/getChosenOntology']
-            console.log(this.chosenOntology)
+            // console.log(this.chosenOntology)
+        },
+        getClasses(){
+            this.classes = this.$store.getters['ontologies/getClasses']
+            // console.log(this.chosenOntology)
         },
         getOntologyRelations(){
-            this.ontologyRelations_f =  this.$store.getters['ontologies/getRelations']["functional"]
-            this.ontologyRelations_nf =  this.$store.getters['ontologies/getRelations']["not_functional"]
+            this.ontologyRelations_f =  Object.values(this.$store.getters['ontologies/getRelations']["functional"])
+            this.ontologyRelations_nf =  Object.values(this.$store.getters['ontologies/getRelations']["not_functional"])
 
         },
         getPossibleTripels(){
             this.ontologyRelations =  this.$store.getters['ontologies/getPossibleTripels']
         },
-        isFunctional() {
-            if(this.ontologyRelations_f && this.ontologyRelations_nf){
-                this.is_functional = (this.predicate in this.ontologyRelations_f)
-            }
-        }
     },
     computed: {
     
@@ -503,35 +537,51 @@ export default {
         checkedPredicate(){
 
             if(this.predicate_id != ""){
-                return this.$store.getters['ontologies/getRelations'][this.predicate_id]
+                //console.log("hi 3")
+                //console.log(this.predicate_id)
+                let pred = this.$store.getters['ontologies/getRelations']["functional"][this.predicate_id]
+                if(!pred)
+                   pred = this.$store.getters['ontologies/getRelations']["not_functional"][this.predicate_id]
+                // console.log(pred)
+                return pred
             }
+                        //console.log("hi 2")
+
+            //console.log(this.predicate_id)
             return null
         },
-        possibleSubjects(){
+        possibleSubjectsObjects(){
 
-            let output = ""
-            let subjs = this.checkedPredicate.subjs
-            subjs.forEach(element => {
-                output += (this.$store.getters['ontologies/getClassData'](element).name + ", ")
-            });
-            return output.substring(0, output.length - 2);
-        },
-        possibleObjects(){
-
-            let output = ""
-            if (this.checkedPredicate.is_functional == "1"){
-                output += "Object has to be a literal."
-            }else{
-                if(this.checkedPredicate.objs.length == 0){
-                    return "Error with predicate"
-                }
-                let objs = this.checkedPredicate.objs
-                objs.forEach(element => {
-                    output += (this.$store.getters['ontologies/getClassData'](element).name + ", ")
-                });
-                output = output.substring(0, output.length - 2);
+            let objs = []
+            let output = {
+            subj_output: "",
+            obj_output: "",
             }
-            return output
+            if(!this.checkedPredicate.is_functional){
+                
+                // console.log(this.ontologyRelations)
+                
+                this.ontologyRelations.forEach(element => {
+                    
+                    if(element.predicate.id == this.predicate_id){
+                        output.subj_output += (this.$store.getters['ontologies/getClassData'](element.subject.id).name + ", ")
+                        
+                        let o = this.$store.getters['ontologies/getClassData'](element.object.id).name
+                        if(!objs.includes(o))
+                            objs.push(o)
+                    }
+                });
+
+                output.subj_output = output.subj_output.substring(0, output.subj_output.length - 2);
+
+                objs.forEach(element => {
+                    output.obj_output += (element + ", ")
+                });
+                
+                output.obj_output = output.obj_output.substring(0, output.obj_output.length - 2);
+
+                }
+                return output;
         },
         
     },

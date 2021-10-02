@@ -162,8 +162,8 @@ export default {
             
         },
         removeIndividual(){
-            console.log(this.literalList)
-            console.log(this.individualsList)
+            //console.log(this.literalList)
+            //console.log(this.individualsList)
             if(this.literalMode){
                 this.$emit('delete-literal', this.checkedLiteral)
                 //this.literalList.delete(this.checkedLiteral)
@@ -184,8 +184,8 @@ export default {
 
         
             let loaded = this.$store.getters['ontologies/getClasses']
-            console.log("loaded")
-            console.log(loaded)
+            //console.log("loaded")
+            //console.log(loaded)
             if(loaded){
 
                 Object.entries(loaded).forEach(([key, value]) => {
@@ -194,7 +194,7 @@ export default {
                     classes_arr.push(val)
             });
             }
-            console.log(classes_arr)
+            //console.log(classes_arr)
             return classes_arr;
         },
         buttonEnabled() {

@@ -52,8 +52,9 @@ export default {
         if (tripels){
             tripels.forEach(ele => {
                 if(ele.predicate.id in getters.getRelations['not_functional'] ){
-                    if(!subjectIds.includes(ele.subj.id)){
-                        subjectIds.push(ele.subj.id)
+                    ///console.log(ele)
+                    if(!subjectIds.includes(ele.subject.id)){
+                        subjectIds.push(ele.subject.id)
                 }
             }})
         

@@ -10,8 +10,8 @@ requestHandler.interceptors.request.use((config) => {
       return config;
     }
     
-    console.log("authData")
-    console.log(authData)
+    // console.log("authData")
+    // console.log(authData)
     config.headers.common["Authorization"] = `Bearer ${authData.token}`;
     return config;
   });
@@ -23,20 +23,21 @@ requestHandler.interceptors.request.use((config) => {
     async (error) => {
       if (error.response.status === 401) {
         const authData = store.getters["auth/getAuthenticationData"];
+        console.log(authData)
         const payload = {
-          access_token: authData.token,
           refresh: authData.refreshToken,
         };
         
-        console.log("payload")
+        //console.log("payload")
         console.log(payload)
+
 
         var response = await axios.post(
           "http://localhost:8000/api/user/token-refresh/",
           payload
         );
-        console.log("reponse")
-        console.log(response.data)
+         console.log("reponse")
+         console.log(response.data)
 
         store.commit("auth/saveAuthenticationData", {
           access_token: response.data.access 
@@ -47,7 +48,7 @@ requestHandler.interceptors.request.use((config) => {
         ] = `Bearer ${response.data.access}`;
         return axios(error.config);
       } else {
-        console.log("Test2")
+        // console.log("Test2")
         return Promise.reject(error);
       }
     }

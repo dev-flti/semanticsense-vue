@@ -5,26 +5,20 @@ export default {
         state.authStatus = data;
     },
     saveAuthenticationData(state, data){
-        const authData = {
-            token: data.access_token,
-            expiration: jwtDecrypt(data.access_token).exp,
-            userId: null,
-            refreshToken: null
-          };
+        
         
         localStorage.setItem("access_token", data.access_token);
-        state.authenticationData.token = authData.token
-        state.authenticationData.expiration = authData.expiration
+        state.authenticationData.token =data.access_token
+        state.authenticationData.expiration = jwtDecrypt(data.access_token).exp
+
         if(data.refresh_token){
             localStorage.setItem("refresh_token", data.refresh_token);
-            authData['refreshToken'] = data.refresh_token
-            state.authenticationData.refresToken = authData.refreshToken
+            state.authenticationData.refreshToken =  data.refresh_token
 
         }
         if(data.userId){
             localStorage.setItem("userId", data.userId);
-            authData['userId'] = data.userId
-            state.authenticationData.userId = authData.userId
+            state.authenticationData.userId = data.userId
 
         }
        

@@ -17,7 +17,7 @@
                 <div v-if="isFunctional" class="options-wrapper">
                 <h3>Choose existent Literals</h3>
                 <h4>Creating literal can be done above the tripel</h4>
-                <div v-for="(lit, index) in literals" :key="index" class="form-group form-check">
+                <div v-for="(lit, index) in literals_list" :key="index" class="form-group form-check">
                         <div class="class-description">
                             <div  class="class-description-cb">
                                 <input type="checkbox" v-model="selected" @change="updateChecked" :id="lit.id" :value="lit.id" class="form-check-input">
@@ -35,7 +35,7 @@
                 <div v-if="!isFunctional" class="options-wrapper">
                 <h3>Choose existent individual (class objects)</h3>
                 <h4>Creating individual can be done above the tripel</h4>
-                <div v-for="(ind, index) in individuals" :key="index" class="form-group form-check">
+                <div v-for="(ind, index) in individuals_list" :key="index" class="form-group form-check">
                         <div class="class-description">
                             <div  class="class-description-cb">
                                 <input type="checkbox" v-model="selected" @change="updateChecked" :id="ind.id" :value="ind.id" class="form-check-input">
@@ -43,7 +43,7 @@
                             <div class="class-description-txt">
                                 <p >Object</p>
                                 <span>Name: {{ind.name}}</span>
-                                <span>Class: {{ind.classType}}</span>
+                                <span>Class: {{classes[ind.classId].name}}</span>
                                 <span>Label: {{ind.label}}</span>
                                 <span>Comment: {{ind.comment}}</span>
                             </div>
@@ -79,7 +79,7 @@
 
 <script>
   export default {
-      props:['show', 'isFunctional', 'literals', 'individuals'],
+      props:['show', 'isFunctional', 'literals', 'individuals', 'classes'],
     data() {
       return {
         name: '',
@@ -91,37 +91,42 @@
     },
     emits: ['close', 'save-close'],
     computed: {
-        
+        literals_list(){
+            return Object.values(this.literals)
+        },
+        individuals_list(){
+          return Object.values(this.individuals)
+        },
         valid(){
             return this.selected.length > 0
         },
-       a_classes_opts(){
-           let options = []
-           console.log(this.a_classes)
-           this.a_classes.forEach(cl => {
-               console.log(cl.name)
-               options.push({
-                   text: cl.name,
-                   value: cl.id
-               })
-           });
+      //  a_classes_opts(){
+      //      let options = []
+      //      console.log(this.a_classes)
+      //      this.a_classes.forEach(cl => {
+      //          console.log(cl.name)
+      //          options.push({
+      //              text: cl.name,
+      //              value: cl.id
+      //          })
+      //      });
            
-           console.log(options)
-           return options
-       },
-       classes_opts(){
-           let options = []
+      //      console.log(options)
+      //      return options
+      //  },
+      //  classes_opts(){
+      //      let options = []
 
-           this.classes.forEach(cl => {
-               console.log(cl.name)
-               options.push({
-                   text: cl.name,
-                   value: cl.name
-               })
-           });
+      //      this.classes.forEach(cl => {
+      //          console.log(cl.name)
+      //          options.push({
+      //              text: cl.name,
+      //              value: cl.name
+      //          })
+      //      });
         
-           return options
-       }
+      //      return options
+      //  }
     },
     methods: {
         closeDialog() {
@@ -130,7 +135,7 @@
         },
         saveClose() {
         
-        console.log(this.selected)
+        //console.log(this.selected)
         this.$emit('save-close', this.selected);
         this.selected = []
         },
