@@ -9,6 +9,9 @@ export function getAnnotationListEndpoint(){
 export function getAnnotationDataEndpoint(){
     return process.env.VUE_APP_GET_ANNOTATION_DATA_ENDPOINT
 }
+export function getPostAnnotationEndpoint(){
+    return process.env.VUE_APP_POST_ANNOTATION_ENDPOINT
+}
 
 //Ontology Endpoints
 export function getOntologieListEndpoint(){

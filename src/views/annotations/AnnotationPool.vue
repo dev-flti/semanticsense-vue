@@ -2,7 +2,7 @@
 
     <div class="container">
         <div class="inner-container">
-            <annotation-item v-for="item in loadAnnotations" 
+            <annotation-item v-for="item in getAnnotationListAction" 
             :key="item.id"
             :id="item.id" 
             :title="item.projectName" 
@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import AnnotationItem from '../../components/annotations/AnnotationItem.vue'
 // import TheHeader from '../../components/general/TheHeader.vue';
 
@@ -27,11 +28,17 @@ export default {
         }
     },
     computed: {
-        loadAnnotations(){
-            const annotations = this.$store.getters['annotations/annotations'];
-            console.log(annotations);
-            return annotations;
-        }
+        ...mapGetters('annotations', {
+            getAnnotationListAction: 'getAnnotations'
+        })
+    },
+    methods: {
+        ...mapActions('annotations', {
+            loadingAnnotationsAction: 'loadAnnotations'
+        }),
+    },
+    created() {
+        this.loadingAnnotationsAction()
     }
 }
 </script>

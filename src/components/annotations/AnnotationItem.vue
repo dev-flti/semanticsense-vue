@@ -19,11 +19,13 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import AnnotationDetailModal from "../../components/annotations/AnnotationDetailModal.vue"
 export default {
     data(){
         return{
             show: false,
+            data: null
         }
     },
     components: {
@@ -31,13 +33,21 @@ export default {
     },
     props: ['id','title', 'description', 'author'],
     methods: {
-        openDetails(){
+        ...mapActions('annotations', {
+            loadAnnotationDataAction: 'loadAnnotationData',
+        }),
+        async openDetails(){
             this.show = true
+            let data = await this.loadAnnotationDataAction(this.id)
+            this.data = data
+            console.log(this.data)
             console.log(this.id)
         },
         closeModal(){
             this.show = false;
         }
+    },
+    computed: {
     }
 }
 </script>

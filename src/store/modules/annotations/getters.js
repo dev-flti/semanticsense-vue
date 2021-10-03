@@ -1,7 +1,6 @@
 export default {
   
-    annotations(state) {
+    getAnnotations(state) {
         return state.annotations;
     }
-
 }

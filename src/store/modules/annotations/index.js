@@ -6,7 +6,18 @@ import mutations from './mutations.js';
 export default {
     namespaced: true,
     state:{
-        annotations: [
+        annotations: [],
+    },
+    getters,
+    mutations,
+    actions
+
+
+}
+
+/* 
+
+[
             {
             id: 'a1',
             author: 'Universität Augsburg',
@@ -77,11 +88,4 @@ export default {
               date: new Date(),
               lastUpdated: new Date()
               },
-        ]
-    },
-    getters,
-    mutations,
-    actions
-
-
-}
+        ]*/

@@ -140,6 +140,7 @@ export default {
                         "label": this.individualLabel,
                         "comment": this.individualComment,
                         "classId": this.selectedClass,
+                        "className": this.classList[this.selectedClass].name,
                         "id": uuidv4()
                     }
                 this.individualName = "";
@@ -179,16 +180,19 @@ export default {
     
     },
     computed: {
+        classList(){
+            return this.$store.getters['ontologies/getClasses']
+        },
         classes() {
             let classes_arr = []
 
         
-            let loaded = this.$store.getters['ontologies/getClasses']
+            // let loaded = 
             //console.log("loaded")
             //console.log(loaded)
-            if(loaded){
+            if(this.classList){
 
-                Object.entries(loaded).forEach(([key, value]) => {
+                Object.entries(this.classList).forEach(([key, value]) => {
                     let val = value;
                     val["id"] = key;
                     classes_arr.push(val)

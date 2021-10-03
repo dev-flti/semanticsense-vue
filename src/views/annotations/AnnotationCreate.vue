@@ -130,9 +130,9 @@
                     
                     <div class="selector-label form-floating mb-3">
                             <select class="form-select d-flex justify-content-center" id="inputSelect" aria-label="Default select example" @change="onPredicateSelectorChange()" v-model="predicate_id">
-                                <option value="-1" disabled selected>Object Relations</option>
+                                <option value="-1" disabled selected>Literal Relations</option>
                                 <option v-for="pred in ontologyRelations_f" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
-                                <option value="-2" disabled selected>Literal Relations</option>
+                                <option value="-2" disabled selected>Object Relations</option>
                                 <option v-for="pred in ontologyRelations_nf" :key="pred.id" :value="pred.id">{{pred.name}}</option>  
                             </select>
                             <label for="inputSelect">Select Predicate</label>
@@ -351,8 +351,11 @@ export default {
     methods: {
         ...mapActions('ontologies', {
             loadOntologyData: 'loadSingleOntology',
-            loadOntologiesList: 'loadOntologies'
+            loadOntologiesList: 'loadOntologies',
         }),
+        ...mapActions('annotations', {
+            saveAnnotationToServer: 'saveAnnotation'
+            }),
         addObjects(data){
             // console.log("hii")
             this.o_array = data;
@@ -399,6 +402,8 @@ export default {
             // console.log("Obj:")
             // console.log(this.o_array)
 
+            if(this.subject_id && this.checkedPredicate && this.o_array.length > 0){
+
             this.tripels.push({
                 subject: this.subject_id,
                 predicate: this.checkedPredicate,
@@ -406,13 +411,19 @@ export default {
             })
 
 
-            
-            // this.is_functional = null
             this.subject =  null
             this.predicate = null
             this.o_array = []
             this.subject_id = ""
             this.predicate_id = ""
+            }
+
+           
+
+
+            
+            // this.is_functional = null
+            
         },
         async onOntologySelectorChange(){
             // console.log(this.ontology_id)
@@ -449,19 +460,21 @@ export default {
         },
         onPredicateSelectorChange(){
           this.o_array = []          
-        //  this.isFunctional()
-        //   console.log("hi")
+          //this.isFunctional()
+          //console.log("hi")
           //console.log(this.predicate_id)
           //console.log(this.checkedPredicate)
 
         },
-        saveAnnotation(){
+        async saveAnnotation(){
             console.log(this.tripels)
             let save_data = {
+                user_id: localStorage.getItem("userId"),
                 title: this.title,
                 author: this.author,
                 description: this.description,
                 date: this.date, 
+                ontology_id: this.chosenOntology.ontology_id,
                 individuals:{
                 },
                 literals: {       
@@ -475,29 +488,38 @@ export default {
 
                 if(e.predicate.is_functional == "0"){
                     Object.entries(e.objects).forEach(([key, value]) => {
-                        save_data.individuals[key] = value
-                        save_data.relations.push(e)
+                        if(!(value in save_data.individuals))
+                        {
+                            save_data.individuals[key] = this.individuals[value]
+                            save_data.relations.push({
+                            subject: e.subject,
+                            predicate: e.predicate,
+                            object: value
+                            })
+                        }
                     })
                 }else{
-                    Object.entries(e.objects).forEach(([key, value]) => {
-                        save_data.literals[key] = value
-
+                    e.objects.forEach(value => {
+                        save_data.literals[value] = this.literals[value]
                         save_data.relations.push({
-                            subject: this.individuals[e.subject],
+                            subject: e.subject,
                             predicate: e.predicate,
                             object: value
                         })
                     })
                 }
                 
-                
+            })
+
 
                 // console.log(e.subject)
                 // console.log(e.predicate)
                 // console.log(e.objects)
                  console.log("save-data:")
                  console.log(save_data)
-            })
+
+                await this.saveAnnotationToServer(save_data)
+
         },
         getSubjects(){
             this.subject_list = this.$store.getters['ontologies/getSubjects'];

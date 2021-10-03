@@ -33,7 +33,5 @@ export default {
           };
         
           state.authenticationData = authData
-
-        
     }
 }

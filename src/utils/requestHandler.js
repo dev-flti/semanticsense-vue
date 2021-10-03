@@ -48,7 +48,6 @@ requestHandler.interceptors.request.use((config) => {
         ] = `Bearer ${response.data.access}`;
         return axios(error.config);
       } else {
-        // console.log("Test2")
         return Promise.reject(error);
       }
     }
