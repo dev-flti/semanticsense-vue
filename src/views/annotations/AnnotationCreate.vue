@@ -7,7 +7,7 @@
         :individuals="individuals"
         :classes="classes"></objects-modal>
         <div class="action-bar">
-           <button class="btn-lg btn-primary" type="button" id="save" :disabled="tripels.length == 0" @click="saveAnnotation()"> 
+           <button class="btn-lg btn-primary" type="button" id="save" :disabled="tripels.length == 0 || !root_id" @click="saveAnnotation()"> 
                             Save
            </button>
         </div>
@@ -86,7 +86,18 @@
 </div>
 <annotation-individual :literalList="literals" :individualsList="individuals" @add-literal="addLiteral" @add-individual="addIndividual" @delete-individual="removeIndividual" @delete-literal="removeLiteral"></annotation-individual>
 
-
+<div>
+    <div>
+        <h3>Select Root Individual</h3>
+          <div class="selector-label form-floating mb-3">
+                        <select class="form-select d-flex justify-content-center" aria-label="Default select example" v-model="root_id">
+                            <option value="-1"  disabled>Select Root Individual</option>
+                            <option v-for="(sub, index) in individuals" :key="index" :value="index">{{sub.name}}</option>    
+                        </select>
+                        <label for="inputSelect">Select Subject</label>
+                    </div>
+    </div>
+</div>
 <div id="add_annotation" class="add-annotation">
     <div class="annotation-create-wrapper">
     <div class="annotation-create-item">
@@ -332,6 +343,7 @@ export default {
             possibleTriples: [],
             classes: null,
 
+            root_id: null,
             //variables current editable triple
             subject: null,
             predicate: null,
@@ -448,6 +460,7 @@ export default {
             this.individuals= {}
             this.literals= {}
             this.tripels = []
+            this.root_id = null
             // this.is_functional = false
 
         },
@@ -475,6 +488,7 @@ export default {
                 description: this.description,
                 date: this.date, 
                 ontology_id: this.chosenOntology.ontology_id,
+                root_name: this.individuals[this.root_id].name,
                 individuals:{
                 },
                 literals: {       
