@@ -162,7 +162,7 @@
 
 dialog {
   position: fixed;
-  top: 20vh;
+  top: 10vh;
   left: 10%;
   width: 80%;
   z-index: 100;
@@ -171,7 +171,8 @@ dialog {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   padding: 0;
   margin: 0;
-  overflow: hidden;
+  overflow: scroll;
+  max-height:800px;
   background-color: white;
 }
 .dialog-container{

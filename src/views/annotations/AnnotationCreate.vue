@@ -98,6 +98,7 @@
                     </div>
     </div>
 </div>
+
 <div id="add_annotation" class="add-annotation">
     <div class="annotation-create-wrapper">
     <div class="annotation-create-item">
@@ -181,7 +182,7 @@
                 
                 <div v-if="checkedPredicate">
                 <div v-if="!checkedPredicate.is_functional && o_array.length > 0">
-                 <div  v-for="(o) in o_array" :key="o" class="triple-save-section">
+                 <div  v-for="(o, index) in o_array" :key="o" class="triple-save-section">
                     <div class="tripel-part-data">
                         <span class="data-label">Name</span>
                         <span>{{individuals[o].name}}</span>
@@ -198,10 +199,13 @@
                         <span class="data-label">Comment</span>
                         <span>{{individuals[o].comment}}</span>
                     </div>
-                    <div class="break-line">
+
+                    <div v-if="index != o_array.length - 1">
                         <hr>
                     </div>
+
                     </div>
+
             </div>    
 
             <div v-if="checkedPredicate.is_functional && o_array.length > 0">
@@ -209,9 +213,6 @@
                     <div class="tripel-part-data">
                         <span class="data-label">Value</span>
                         <span>{{literals[o].name}}</span>
-                    </div>
-                    <div class="break-line">
-                        <hr>
                     </div>
                 </div>
             </div>  
@@ -222,6 +223,7 @@
     </div>
     </div>
                 <div class="add-tripel-btn-section">
+                    <p class="fail-add-text" v-if="addFailure">{{failAddText}}</p>
                     <button class="btn-lg btn-primary" type="button" id="addTriple" @click="addTripel()"> 
                             Add Triple
                         </button>
@@ -230,12 +232,10 @@
             </div>
 
 
-    
-<!-- <annotation-tripel v-for="tripel in tripels" :key="tripel" :triple="tripel"></annotation-tripel>-->
-
-  <div v-for="(tripel, index) in tripels" :key="index" class="tripel-wrapper">
+    <div v-for="(tripel, index) in tripels" :key="index" class="tripel-list-item">
+  <div class="tripel-wrapper">
       <div class="tripel-part">
-        <div> 
+         <div> 
             <span class="data-label">Name:</span>
             <p>{{individuals[tripel.subject].name}}</p>
         </div>
@@ -247,64 +247,51 @@
             <span class="data-label">Comment:</span>
             <p>{{individuals[tripel.subject].comment}}</p>
         </div>
-          <div> 
-            <span class="data-label">Id:</span>
-            <p>{{individuals[tripel.subject].id}}</p>
-        </div>
-      </div>
+      </div> 
       <div class="tripel-part">
-            <div> 
-                <span class="data-label">Id</span>
-                <p>{{tripel.predicate.id}}</p>
-            </div>
-            <div> 
-                <span class="data-label">Is Functional?</span>
-                <p>{{tripel.predicate.is_functional ? "Only Literals possible" : "Only Objects Possible"}}</p>
-            </div>
-            <!-- <div v-if="!tripel.predicate.is_functional"> 
-                <span class="data-label">Name</span>
-                <p>{{predicate_list["not_functional"][tripel.predicate.id].name}}</p>
-            </div> -->
-            <div> 
+          <div> 
                 <span class="data-label">Name</span>
                 <p>{{tripel.predicate.name}}</p>
             </div>
+            <div> 
+                <span class="data-label">Is Functional: {{tripel.predicate.is_functional ? "Yes" : "No"}}</span>
+                <p>{{tripel.predicate.is_functional ? "Only Literals possible" : "Only Objects Possible"}}</p>
+            </div>
       </div>
-      <div v-if="!tripel.predicate.is_functional" class="tripel-part">
-             <div  v-for="(o, index) in tripel.objects" :key="index" class="triple-save-section">
+       <div v-if="!tripel.predicate.is_functional" class="tripel-part">
+             <div class="triple-save-section">
                     <div class="tripel-part-data">
                         <span class="data-label">Name</span>
-                        <span>{{individuals[o].name}}</span>
+                        <span>{{individuals[tripel.object].name}}</span>
                     </div>
                     <div class="tripel-part-data">
                         <span class="data-label">Class Type</span>
-                        <span>{{classes[individuals[o].classId].name}}</span>
+                        <span>{{classes[individuals[tripel.object].classId].name}}</span>
                     </div>
                     <div class="tripel-part-data">
                         <span class="data-label">Label</span>
-                        <span>{{individuals[o].label}}</span>
+                        <span>{{individuals[tripel.object].label}}</span>
                     </div>
                     <div class="tripel-part-data">
                         <span class="data-label">Comment</span>
-                        <span>{{individuals[o].comment}}</span>
+                        <span>{{individuals[tripel.object].comment}}</span>
                     </div>
-                    <div class="break-line">
-                        <hr>
-                    </div>
-                    </div>
-      </div>
-          <div v-if="tripel.predicate.is_functional" class="tripel-part">
-             <div  v-for="(o, index) in tripel.objects" :key="index" class="triple-save-section">
-                    <div class="tripel-part-data">
-                        <span class="data-label">Value</span>
-                        <span>{{literals[o].name}}</span>
-                    </div>
-                    <div class="break-line">
-                        <hr>
-                    </div>
-                    </div>
-      </div>
+               
+            </div>
+      </div> 
+        <div v-if="tripel.predicate.is_functional" class="tripel-part">
+            <div class="triple-save-section">
+                <div class="tripel-part-data">
+                    <span class="data-label">Value</span>
+                    <span>{{literals[tripel.object].name}}</span>
+                </div>
+            </div>
+        </div>
+</div>
 
+    <div class="tripel-actions">
+        <button class="btn btn-secondary" type="button" :value="index" @click="removeTripel($event)">Remove</button>
+    </div>
   </div>
 
  </div>
@@ -357,6 +344,8 @@ export default {
          
             //utils
             openModal: false,
+            failAddText: "",
+            addFailure: false
             // is_functional: null
         }
     },
@@ -414,28 +403,60 @@ export default {
             // console.log("Obj:")
             // console.log(this.o_array)
 
+        
+
             if(this.subject_id && this.checkedPredicate && this.o_array.length > 0){
 
-            this.tripels.push({
-                subject: this.subject_id,
-                predicate: this.checkedPredicate,
-                objects: this.o_array
+            this.o_array.forEach(e => {
+                    console.log(this.ontologyRelations)
+                    console.log(this.checkedPredicate)
+                    console.log(this.individuals[this.subject_id])
+                    console.log(e)
+                    let search = null
+                    if(!this.checkedPredicate.is_functional){
+                        search = this.ontologyRelations.find(x => x.subject.id === this.individuals[this.subject_id]['classId'] && x.predicate.id == this.checkedPredicate.id && x.object.id == this.individuals[e]['classId'])
+                    }else {
+                        search = this.ontologyRelations.find(x => x.subject.id === this.individuals[this.subject_id]['classId'] && x.predicate.id == this.checkedPredicate.id)
+                    }
+                    console.log(search)
+                if(!search){
+                    this.failAddText = "Tried to add a not valid combination of subject, predicate and object - please check and try again"
+                    this.addFailure = true
+                }else{
+                    this.failAddText = ""
+                    this.addFailure = false
+                }
             })
+            if(!this.addFailure){
+                this.o_array.forEach(e => {
+
+                    this.tripels.push({
+                            subject: this.subject_id,
+                            predicate: this.checkedPredicate,
+                            object: e
+                        })
 
 
-            this.subject =  null
-            this.predicate = null
-            this.o_array = []
-            this.subject_id = ""
-            this.predicate_id = ""
+                })
+                    this.subject =  null
+                    this.predicate = null
+                    this.o_array = []
+                    this.subject_id = ""
+                    this.predicate_id = ""
+                    this.addFailure = false
             }
-
+             
            
-
-
-            
+            }else{
+                this.failAddText = "There is something missing"
+                    this.addFailure = true
+            }
             // this.is_functional = null
-            
+            console.log(this.tripels)
+        },
+        removeTripel(event){
+            console.log(event.target.value)
+            this.tripels.splice(event.target.value, 1)
         },
         async onOntologySelectorChange(){
             // console.log(this.ontology_id)
@@ -501,26 +522,26 @@ export default {
                 }
 
                 if(e.predicate.is_functional == "0"){
-                    Object.entries(e.objects).forEach(([key, value]) => {
-                        if(!(value in save_data.individuals))
+                    //Object.entries(e.objects).forEach(([key, value]) => {
+                        if(!(e.object in save_data.individuals))
                         {
-                            save_data.individuals[key] = this.individuals[value]
+                            save_data.individuals[e.object] = this.individuals[e.object]
                             save_data.relations.push({
                             subject: e.subject,
                             predicate: e.predicate,
-                            object: value
+                            object: e.object
                             })
                         }
-                    })
+                    //})
                 }else{
-                    e.objects.forEach(value => {
-                        save_data.literals[value] = this.literals[value]
+                    //e.objects.forEach(value => {
+                        save_data.literals[e.object] = this.literals[e.object]
                         save_data.relations.push({
                             subject: e.subject,
                             predicate: e.predicate,
-                            object: value
+                            object: e.object
                         })
-                    })
+                    //})
                 }
                 
             })
@@ -532,7 +553,7 @@ export default {
                  console.log("save-data:")
                  console.log(save_data)
 
-                await this.saveAnnotationToServer(save_data)
+                //await this.saveAnnotationToServer(save_data)
 
         },
         getSubjects(){
@@ -649,6 +670,7 @@ export default {
 
     .add-annotation{
         margin-top: 20px;
+        width: 90%;
        
     }
 
@@ -716,7 +738,13 @@ export default {
     .add-tripel-btn-section{
         justify-content: center;
         display: flex;
-        margin-bottom: 50px;
+        flex-direction: column;
+        margin-bottom: 40px;
+        align-items: center;
+
+    }
+    .add-tripel-btn-section button{
+        width:20%;
     }
 
     .tripel-part-data{
@@ -748,7 +776,7 @@ export default {
     }
 
     .tripel-wrapper{
-        width:100%;
+        width:90%;
         display: flex;
         justify-content: space-between;
         margin-bottom: 40px;
@@ -762,7 +790,18 @@ export default {
         width:100%;
         display: flex;
     }
-   
+    .tripel-list-item{
+        display:flex;
+    }
+
+    .tripel-actions{
+        margin: auto;
+    }
+    .fail-add-text{
+        color: orangered;
+        font-size: 16px;
+        font-weight: 700;
+    }
 </style>
 
 
