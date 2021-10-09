@@ -1,5 +1,5 @@
 import requestHandler from "../../../utils/requestHandler"
-import { getBackendBaseUrl, getOntologieListEndpoint, getOntologyDataEndpoint, getOntologyDeleteEndpoint, getOntologyImportEndpoint} from "../../../utils/envHelper"
+import { getBackendBaseUrl, getCreateCategoriesEndpoint, getOntologieListEndpoint, getOntologyCategoriesEndpoint, getOntologyDataEndpoint, getOntologyDeleteEndpoint, getOntologyImportEndpoint} from "../../../utils/envHelper"
 
 export default {
     async loadOntologies(context){
@@ -49,6 +49,39 @@ export default {
             title: data.title,
             url: data.url,
             user: localStorage.getItem("userId"),
+            description: data.description,
+            category_id: data.category_id
+        }
+
+        // console.log(payload)
+        /* const response = */ await requestHandler.post(url, payload, {
+          headers: headers
+        })
+        .catch((err) => {
+           alert(err);
+        });
+
+        // console.log("response")
+        // console.log(response)
+    },
+    async loadCategories(context){
+        const url = getBackendBaseUrl() + getOntologyCategoriesEndpoint()
+        
+        let response = await requestHandler.get(url)
+        if(response && response.data){
+            context.commit('setCategoryList', response.data.results);
+        }
+    },
+    async saveCategory(_, data){
+        const url = getBackendBaseUrl() + getCreateCategoriesEndpoint()
+        // console.log("url")
+        // console.log(url)
+        const headers = {
+            'Content-Type': 'application/json',
+          }
+        
+        const payload = {
+            title: data.title,
             description: data.description
         }
 
@@ -62,7 +95,7 @@ export default {
 
         // console.log("response")
         // console.log(response)
-    }
+    },
 }
 
 /*   

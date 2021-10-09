@@ -1,12 +1,12 @@
 <template>
-
 <div class="container">
+<create-category-modal :show="showDialog" @close="closeModal" @saveClose="saveCloseModal"></create-category-modal>
     <div class="header-section">
         <h1>Upload Ontology</h1>
     </div> 
     <div class="info-section">
         <div>
-        Ontologien werden als Regelwerk zur semantischen Annotation von realen Objekten, Individuen oder verschiedensten Dingen benötigt.
+            Ontologies are schemas with rules that determine the way in which a uniquely identifiable object can be semantically annotated within the semantic web.         
         </div>
     </div>
     <div class="form-section">
@@ -21,13 +21,19 @@
                     <input type="text" v-model="url" class="form-control" id="ontologyUrl" placeholder="Enter Ontology URL"/>
                     <label for="ontologyUrl">URL</label>
             </div>
-                
-            <div class="form-floating mb-3">
+            
+            <div class="select-category">
+
+            <div class="category-selector form-floating mb-3">
                             <select class="form-select" id="inputSelect" aria-label="Floating label select example" v-model="selectedCategory">
                                 <option value="-1" disabled>Open this select menu</option>
                                 <option v-for="c in categories" :key="c.id" :value="c.id">{{c.title}}</option>
                             </select>
                             <label for="inputSelect">Select Category</label>
+            </div>
+            <div class="category-btns">
+                <button class="btn btn-secondary" type="button" @click="openCategoryModal()">New Category</button>
+            </div>
             </div>
 
             <div class="form-floating mb-3">
@@ -53,10 +59,12 @@
 // import TheHeader from '../../components/general/TheHeader.vue';
 import {mapActions, mapGetters} from 'vuex';
 import OntologyItem from '../../components/ontologies/OntologyItem.vue';
+import CreateCategoryModal from "../../components/ontologies/CreateCategoryModal.vue"
 
 export default {
     components:{
         OntologyItem,
+        CreateCategoryModal
         // TheHeader,
 
     },
@@ -66,21 +74,24 @@ export default {
                 title: "",
                 url: "",
                 description:"",
-                selectedCategory: null
+                selectedCategory: null,
+                showDialog: false
             }
         },
     methods: {  
         ...mapActions('ontologies', {
             loadOntologiesAction: 'loadOntologies',
             uploadOntologyAction: 'uploadOntology',
+            loadCategoriesAction: 'loadCategories',
+            saveCategoryAction: 'saveCategory'
         }),        
-        
         async uploadOntology(){
 
             await this.uploadOntologyAction({
                 title: this.title,
                 url: this.url,
-                description: this.description
+                description: this.description,
+                category_id: this.selectedCategory
             })
 
             await this.loadOntologiesAction()
@@ -95,6 +106,19 @@ export default {
             this.url = ""
             this.description = ""
             this.selectedCategory = null
+        },
+        closeModal(){
+            this.showDialog = false;
+        },
+        async saveCloseModal(data){
+            
+            await this.saveCategoryAction(data)
+            await this.loadCategoriesAction()
+
+            this.closeModal()
+        },
+        openCategoryModal(){
+            this.showDialog = true
         }
     },
     computed: {
@@ -114,6 +138,7 @@ export default {
     created() {
         
         this.loadOntologiesAction()
+        this.loadCategoriesAction()
     }
     }
 </script>
@@ -121,6 +146,8 @@ export default {
 <style scoped>
 .info-section{
     margin-bottom: 50px;
+    margin-top: 30px;
+    font-size: 22px;
 }
 .form-section{
     
@@ -131,5 +158,18 @@ export default {
      margin-top: 50px;
 
  }
- 
+
+ .category-btns{
+     width: 15%;
+     display: flex;
+     padding: 20px;
+     justify-content: center;
+     justify-items: center;
+ }
+ .select-category{
+     display: flex;
+ }
+ .category-selector {
+     width: 85%;
+ }
 </style>

@@ -21,6 +21,9 @@ requestHandler.interceptors.request.use((config) => {
       return response;
     },
     async (error) => {
+      if(! error.response){
+        return null
+      }
       if (error.response.status === 401) {
         const authData = store.getters["auth/getAuthenticationData"];
         console.log(authData)

@@ -26,8 +26,16 @@ export function getOntologyDataEndpoint(){
 export function getOntologyImportEndpoint(){
     return process.env.VUE_APP_GET_ONTOLOGY_UPLOAD_ENDPOINT
 }
+
+//Category endpoints
 export function getOntologyCategoriesEndpoint(){
     return process.env.VUE_APP_GET_CATEGORIES_ENDPOINT
+}
+export function getDeleteCategoriesEndpoint(){
+    return process.env.VUE_APP_DELETE_CATEGORY_ENDPOINT
+}
+export function getCreateCategoriesEndpoint(){
+    return process.env.VUE_APP_POST_CATEGORY_ENDPOINT
 }
 
 //User Endpoints

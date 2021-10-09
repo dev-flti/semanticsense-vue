@@ -6,23 +6,7 @@ import mutations from './mutations.js';
 export default {
     namespaced: true,
     state:{
-        categories: [{
-            id: "c1",
-            title: "Hardwarekomponenten"
-        },
-        {
-            id: "c2",
-            title: "Online Content"
-        },
-        {
-            id: "c3",
-            title: "Umweltschutz"
-        },
-        {
-            id: "c4",
-            title: "Sonstiges"
-        }
-    ],
+        categories: [],
         ontologies: [],
         chosenOntology: {}
     },
