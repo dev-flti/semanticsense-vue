@@ -1,6 +1,6 @@
 <template>
 <div>
-    <annotation-detail-modal  :show="show" :id="id" @close="closeModal"></annotation-detail-modal>
+    <annotation-detail-modal  :show="show" :id="id" :data="data" @close="closeModal"></annotation-detail-modal>
     <div>
 
         <div class="card">
