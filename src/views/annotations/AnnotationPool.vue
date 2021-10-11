@@ -5,9 +5,11 @@
             <annotation-item v-for="item in getAnnotationListAction" 
             :key="item.id"
             :id="item.id" 
-            :title="item.projectName" 
+            :title="item.title" 
             :description="item.description"
-            :author="item.author"></annotation-item>
+            :author="item.author"
+            :creationDate="item.publicated_timestamp"
+            :categoryName="item.category_name"></annotation-item>
         </div>
     </div>
 </template>
@@ -39,6 +41,7 @@ export default {
     },
     created() {
         this.loadingAnnotationsAction()
+        console.log(this.getAnnotationListAction)
     }
 }
 </script>

@@ -7,24 +7,25 @@
 
 
           <div class="dialog-container">
-            <div class="dialog-header">
-            <h2>Objects</h2>
-            </div>
+       
                         
         <form ref="form" @submit.stop.prevent="handleSubmit">
 
 
                 <div v-if="isFunctional" class="options-wrapper">
-                <h3>Choose existent Literals</h3>
-                <h4>Creating literal can be done above the tripel</h4>
+                  <div class="options-headlines">
+                    <h3>Choose existent Literals</h3>
+                     <h4>Creating literal can be done above the tripel building section</h4>
+                  </div>
+                
                 <div v-for="(lit, index) in literals_list" :key="index" class="form-group form-check">
                         <div class="class-description">
                             <div  class="class-description-cb">
                                 <input type="checkbox" v-model="selected" @change="updateChecked" :id="lit.id" :value="lit.id" class="form-check-input">
                             </div>
                             <div class="class-description-txt">
-                                <p >Literal</p>
-                                <span>Value: {{lit.name}}</span>
+                                <p class="bold">Literal</p>
+                                <span>{{lit.name}}</span>
                             </div>
 
                         </div>
@@ -33,19 +34,27 @@
 
 
                 <div v-if="!isFunctional" class="options-wrapper">
+                  <div class="options-headlines"> 
                 <h3>Choose existent individual (class objects)</h3>
-                <h4>Creating individual can be done above the tripel</h4>
+                <h4>Creating individual can be done above the tripel building section</h4>
+                </div>
                 <div v-for="(ind, index) in individuals_list" :key="index" class="form-group form-check">
                         <div class="class-description">
                             <div  class="class-description-cb">
                                 <input type="checkbox" v-model="selected" @change="updateChecked" :id="ind.id" :value="ind.id" class="form-check-input">
                             </div>
                             <div class="class-description-txt">
-                                <p >Object</p>
-                                <span>Name: {{ind.name}}</span>
-                                <span>Class: {{classes[ind.classId].name}}</span>
-                                <span>Label: {{ind.label}}</span>
-                                <span>Comment: {{ind.comment}}</span>
+                                <p class="bold">{{classes[ind.classId].name}}</p>
+                                <div class="object-info-wrapper">
+                                <div class="object-info">
+                                <p>Name: {{ind.name}}</p>
+                                <p>Label: {{ind.label}}</p>
+                                </div>
+                                <div class="object-description">
+                                <p>{{ind.comment}}</p>
+                                </div>
+                                </div>
+                               
                             </div>
 
                         </div>
@@ -250,7 +259,6 @@ menu {
 }
 .class-description-txt p{
     margin: 0;
-    font-weight: bold;
 }
 .submit-button-wrapper{
     margin: 20px 0;
@@ -259,6 +267,34 @@ menu {
 }
 label{
     color: #ababab;
+}
+
+.object-info-wrapper{
+  display:flex;
+}
+
+.object-info{
+  display: block;
+  width: auto;
+  flex-direction: column;
+  margin-right: 20px; 
+  color:#6e6e6e;
+   
+}
+.object-description{
+  width: 60%;
+  color:#6e6e6e;
+  text-align: center;
+
+}
+.bold{
+  margin-bottom: 5px;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.options-headlines{
+  margin-bottom: 30px;
 }
 
 </style>

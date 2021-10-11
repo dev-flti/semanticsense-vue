@@ -1,11 +1,24 @@
 <template>
+<div>
     <annotation-detail-modal  :show="show" :id="id" @close="closeModal"></annotation-detail-modal>
     <div>
-        <div class="card">
-          <img :src="require('../../assets/images/sensor_2.jpeg')" class="card-img-top" alt="Picture">
 
+        <div class="card">
+            <div>
+                <div class="custom-card-header">
+                    <div class="header-left">
+                        <p class="author">Universität Augsburg</p>
+                    </div>
+                    <div class="header-right">
+                        <p class="timestamp">{{creationDateConverted}}</p>
+                    </div>
+
+                </div>
+
+                <img :src="require('../../assets/images/sensor_2.jpeg')" class="card-img-top" alt="Picture">
+
+            <h6 class="category">{{categoryName}}</h6>
             <h5 class="card-title">{{ title }}</h5>
-            <p>{{ author }}</p>
             <p class="card-text">
                 {{description}}
             </p>
@@ -13,9 +26,11 @@
             <div class=actions>
         <button @click="openDetails()" class="btn btn-outline-secondary">Open</button>
 </div>
+            </div>
+         
 </div>
 </div>
-
+</div>
 </template>
 
 <script>
@@ -31,7 +46,7 @@ export default {
     components: {
         AnnotationDetailModal
     },
-    props: ['id','title', 'description', 'author'],
+    props: ['id','title', 'description', 'author', 'creationDate', 'categoryName'],
     methods: {
         ...mapActions('annotations', {
             loadAnnotationDataAction: 'loadAnnotationData',
@@ -48,6 +63,11 @@ export default {
         }
     },
     computed: {
+        creationDateConverted(){
+            let date = new Date(this.creationDate)
+
+            return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear()
+        }
     }
 }
 </script>
@@ -64,5 +84,23 @@ export default {
   padding: 1rem;
   margin: 2rem 2rem;
   max-width: 20rem;
+}
+.timestamp{
+    color: #9e9e9e;
+}
+.author{
+    color: #9e9e9e;
+
+}
+.custom-card-header{
+    justify-content: flex-end;
+    display: flex;
+}
+.header-left{
+width: 58%;
+}
+.header-right{
+    width:58%;
+    text-align: end;
 }
 </style>

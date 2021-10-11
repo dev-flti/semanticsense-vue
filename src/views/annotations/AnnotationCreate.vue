@@ -116,14 +116,13 @@
             </div>
             <div v-if="subject" class="triple-save p-2" >
                 <div class="triple-save-section">
-                 <div class="tripel-part-data">
-                    <span class="data-label">Name</span>
+                <div class="tripel-part-header">
                     <span>{{individuals[subject.id].name}}</span>
+                </div>
+                 <div class="tripel-part-class">
+                    <span>{{classes[individuals[subject.id].classId].name}}</span>
                  </div>
-                 <div class="tripel-part-data">
-                        <span class="data-label">Class Type</span>
-                        <span>{{classes[individuals[subject.id].classId].name}}</span>
-                    </div>
+                
                  <div class="tripel-part-data">
                     <span class="data-label">Label</span>
                     <span>{{individuals[subject.id].label}}</span>
@@ -154,10 +153,13 @@
             </div>
                   <div v-if="checkedPredicate" class="triple-save p-2" >
                     <div class="triple-save-section">
-                    <div class="tripel-part-data">
+                     <div class="tripel-part-header">
+                        <span>{{checkedPredicate.name}}</span>
+                     </div>
+                    <!-- <div class="tripel-part-data">
                         <span class="data-label">Name</span>
                         <span>{{checkedPredicate.name}}</span>
-                    </div>
+                    </div> -->
                     <div v-if="!checkedPredicate.is_functional" class="tripel-part-data">
                         <span class="data-label">Subjects</span>
                         <span>{{possibleSubjectsObjects.subj_output}}</span>
@@ -183,14 +185,23 @@
                 <div v-if="checkedPredicate">
                 <div v-if="!checkedPredicate.is_functional && o_array.length > 0">
                  <div  v-for="(o, index) in o_array" :key="o" class="triple-save-section">
-                    <div class="tripel-part-data">
+                  <!--   <div class="tripel-part-data">
                         <span class="data-label">Name</span>
                         <span>{{individuals[o].name}}</span>
+                    </div> -->
+                    
+                    <div class="tripel-part-header">
+                        <span >{{individuals[o].name}}</span>
+                     </div>
+                    <div class="tripel-part-class">
+                        <span>{{classes[individuals[o].classId].name}}</span>
                     </div>
+
+                    <!-- <h3>{{individuals[o].name}}</h3>
                     <div class="tripel-part-data">
                         <span class="data-label">Class Type</span>
                         <span>{{classes[individuals[o].classId].name}}</span>
-                    </div>
+                    </div> -->
                     <div class="tripel-part-data">
                         <span class="data-label">Label</span>
                         <span>{{individuals[o].label}}</span>
@@ -235,24 +246,33 @@
     <div v-for="(tripel, index) in tripels" :key="index" class="tripel-list-item">
   <div class="tripel-wrapper">
       <div class="tripel-part">
-         <div> 
-            <span class="data-label">Name:</span>
-            <p>{{individuals[tripel.subject].name}}</p>
-        </div>
+
+            <div class="tripel-part-data">
+                         <div class="tripel-part-header">
+                        <span>{{individuals[tripel.subject].name}}</span>
+                         </div>
+                    </div>
+                    <div class="tripel-part-data">
+                         <div class="tripel-part-class">
+                            <span>{{classes[individuals[tripel.subject].classId].name}}</span>
+                         </div>    
+                    </div>
         <div> 
-            <span class="data-label">Label:</span>
+            <span class="data-label">Label</span>
             <p>{{individuals[tripel.subject].label}}</p>
         </div>
         <div> 
-            <span class="data-label">Comment:</span>
+            <span class="data-label">Comment</span>
             <p>{{individuals[tripel.subject].comment}}</p>
         </div>
       </div> 
       <div class="tripel-part">
-          <div> 
-                <span class="data-label">Name</span>
-                <p>{{tripel.predicate.name}}</p>
-            </div>
+           <div class="tripel-part-data">
+                         <div class="tripel-part-header">
+                        <span>{{tripel.predicate.name}}</span>
+                        </div>
+                </div>
+          
             <div> 
                 <span class="data-label">Is Functional: {{tripel.predicate.is_functional ? "Yes" : "No"}}</span>
                 <p>{{tripel.predicate.is_functional ? "Only Literals possible" : "Only Objects Possible"}}</p>
@@ -260,14 +280,18 @@
       </div>
        <div v-if="!tripel.predicate.is_functional" class="tripel-part">
              <div class="triple-save-section">
-                    <div class="tripel-part-data">
-                        <span class="data-label">Name</span>
+
+                     <div class="tripel-part-data">
+                         <div class="tripel-part-header">
                         <span>{{individuals[tripel.object].name}}</span>
+                         </div>
                     </div>
                     <div class="tripel-part-data">
-                        <span class="data-label">Class Type</span>
-                        <span>{{classes[individuals[tripel.object].classId].name}}</span>
+                         <div class="tripel-part-class">
+                            <span>{{classes[individuals[tripel.object].classId].name}}</span>
+                         </div>    
                     </div>
+
                     <div class="tripel-part-data">
                         <span class="data-label">Label</span>
                         <span>{{individuals[tripel.object].label}}</span>
@@ -281,6 +305,11 @@
       </div> 
         <div v-if="tripel.predicate.is_functional" class="tripel-part">
             <div class="triple-save-section">
+                <div class="tripel-part-data">
+                         <div class="tripel-part-header">
+                        <span>Literal</span>
+                        </div>
+                </div>
                 <div class="tripel-part-data">
                     <span class="data-label">Value</span>
                     <span>{{literals[tripel.object].name}}</span>
@@ -390,9 +419,8 @@ export default {
             return;
         },
         toggleObjectModal(){
+            this.o_array = []
             this.openModal = !this.openModal
-            
-
             return this.openModal
         },
         addTripel(){
@@ -553,7 +581,7 @@ export default {
                  console.log("save-data:")
                  console.log(save_data)
 
-                //await this.saveAnnotationToServer(save_data)
+                await this.saveAnnotationToServer(save_data)
 
         },
         getSubjects(){
@@ -801,6 +829,16 @@ export default {
         color: orangered;
         font-size: 16px;
         font-weight: 700;
+    }
+    .tripel-part-header{
+        font-size: 18px;
+        font-weight: 800;
+
+    }
+
+    .tripel-part-class{
+        margin-bottom: 15px;
+        color: #6e6e6e;
     }
 </style>
 
